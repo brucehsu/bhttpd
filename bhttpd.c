@@ -30,7 +30,7 @@ int init_conf(struct serv_conf* conf) {
         char *ptr = buf;
         char *to_ptr = param_name;
         while(*ptr!=' ') *to_ptr++ = *ptr++;
-        ++ptr;
+        while(*ptr==' ' || *ptr=='\t') ++ptr;
         to_ptr = param_val;
         while(*ptr!=0 && *ptr!='\n') *to_ptr++ = *ptr++;
         val_len = strlen(param_val) + 1;
