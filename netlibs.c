@@ -15,3 +15,25 @@ int init_info(char* port, struct addrinfo** serv) {
     }
     return 0;
 } 
+
+int init_sock(struct addrinfo *info) {
+    int sockfd;
+
+    sockfd = socket(info->ai_family, info->ai_socktype, info->ai_protocol);
+    if(sockfd==-1) {
+        fprintf(stderr, "Fail to open socket\n");
+        return -1;
+    }
+
+    if(bind(sockfd, info->ai_addr, info->ai_addrlen) == -1) {
+        fprintf(stderr, "Fail to bind port: %s\n", strerror(errno));
+        return -1;
+    }
+
+    if(listen(sockfd, BACKLOG_SIZE) == -1) {
+        fprintf(stderr, "Fail to listen on port: %s\n", strerror(errno));
+        return -1;
+    }
+
+    return sockfd;
+}

@@ -1,11 +1,24 @@
 #include "bhttpd.h"
 
 int main(int argc, char **argv) {
+    int sockfd, clifd;
     struct serv_conf conf;
     struct addrinfo *info;
+    struct sockaddr_storage cli_addr;
+    socklen_t addr_size;
 
     init_conf(&conf);
     init_info(conf.port, &info);
+
+    sockfd = init_sock(info);
+    if(sockfd==-1) return -1;
+
+    addr_size = sizeof(cli_addr);
+    while((clifd = accept(sockfd, (struct sockaddr *) &cli_addr, &addr_size)) != -1) {
+        /* TODO: Fork new process to handle request */
+        /* TODO: Send local files to client */
+        close(clifd);
+    }
 
     return 0;
 }
