@@ -37,3 +37,29 @@ int init_sock(struct addrinfo *info) {
 
     return sockfd;
 }
+
+int send_file(char *file_path, int sockfd) {
+    int len=0;
+    char rbuf[BUFFER_SIZE];
+    FILE *fp = 0;
+
+    memset(rbuf, 0, sizeof rbuf);
+    if ((fp=fopen(file_path,"r"))==0){
+        fprintf(stderr, "Could not open file: %s\n", file_path);
+        return -1;
+    }
+
+    while(!feof(fp) && fread(rbuf, 1, 1, fp)) {
+        write_socket(rbuf, 1, sockfd);
+        ++len;
+    }
+    return len;
+}
+
+int write_socket(char *buf, int len, int sockfd) {
+    int sent = send(sockfd, buf, len, 0);
+    if(sent==-1) {
+        fprintf(stderr, "Send error\n");
+    }
+    return sent;
+}
