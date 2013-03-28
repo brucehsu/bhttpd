@@ -8,8 +8,8 @@
 #include <netdb.h>
 #include <errno.h>
 
-int init_info(char* port, struct addrinfo** serv);
-int init_sock(struct addrinfo *info);
-int send_file(char *file_path, int sockfd);
-int write_socket(char *buf, int len, int sockfd);
+int init_info(const char* port, struct addrinfo** serv);
+int init_sock(const struct addrinfo *info);
+int send_file(const char *file_path, const int sockfd);
+int write_socket(const char *buf, const int len, const int sockfd);
 #endif

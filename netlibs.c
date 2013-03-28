@@ -1,6 +1,6 @@
 #include "netlibs.h"
 
-int init_info(char* port, struct addrinfo** serv) {
+int init_info(const char* port, struct addrinfo** serv) {
     int status;
     struct addrinfo hints;
 
@@ -16,7 +16,7 @@ int init_info(char* port, struct addrinfo** serv) {
     return 0;
 } 
 
-int init_sock(struct addrinfo *info) {
+int init_sock(const struct addrinfo *info) {
     int sockfd;
 
     sockfd = socket(info->ai_family, info->ai_socktype, info->ai_protocol);
@@ -38,7 +38,7 @@ int init_sock(struct addrinfo *info) {
     return sockfd;
 }
 
-int send_file(char *file_path, int sockfd) {
+int send_file(const char *file_path, const int sockfd) {
     int len=0;
     char rbuf[BUFFER_SIZE];
     FILE *fp = 0;
@@ -56,7 +56,7 @@ int send_file(char *file_path, int sockfd) {
     return len;
 }
 
-int write_socket(char *buf, int len, int sockfd) {
+int write_socket(const char *buf, const int len, const int sockfd) {
     int sent = send(sockfd, buf, len, 0);
     if(sent==-1) {
         fprintf(stderr, "Send error\n");
