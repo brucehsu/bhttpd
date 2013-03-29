@@ -56,10 +56,24 @@ int send_file(const char *file_path, const int sockfd) {
     return len;
 }
 
+int read_line(char *buf, const int sockfd) {
+    int stat = 0;
+    while(*buf!='\n') {
+        stat = read_socket(buf, 1, sockfd);
+        if(stat==0) return stat;
+        ++buf;
+    }
+    return stat;
+}
+
 int write_socket(const char *buf, const int len, const int sockfd) {
     int sent = send(sockfd, buf, len, 0);
     if(sent==-1) {
         fprintf(stderr, "Send error\n");
     }
     return sent;
+}
+
+int read_socket(char *buf, int len, const int sockfd) {
+    return recv(sockfd, buf, len, 0);
 }
