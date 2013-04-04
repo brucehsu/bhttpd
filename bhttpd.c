@@ -1,7 +1,7 @@
 #include "bhttpd.h"
 
 int main(int argc, char **argv) {
-    int sockfd, clifd;
+    int sockfd, clifd, fork_stat;
     pid_t pid;
     struct serv_conf conf;
     struct mime * mime_tbl;
@@ -15,11 +15,6 @@ int main(int argc, char **argv) {
     sockfd = init_sock(info);
     if(sockfd==-1) return -1;
     mime_tbl = init_mime_table(); /* BUG: If use before init_sock, will cause failure */
-
-    struct sigaction act;
-    act.sa_handler = terminate_zombie;
-    act.sa_flags = SA_NOCLDSTOP;
-    sigaction( SIGCHLD, &act, 0);
 
     addr_size = sizeof(cli_addr);
     while(1) {
@@ -36,11 +31,23 @@ int main(int argc, char **argv) {
 
         if(pid) {
             /* Parent process */
+            waitpid(pid, &fork_stat, 0);
         } else {
             /* Child process */
-            handle_request(mime_tbl, conf.pub_dir, clifd);
-            close(sockfd);
-            close(clifd);
+            /* Use Double Fork to eliminate zombie process*/
+            if((pid = fork()) == -1) {
+                fprintf(stderr, "Failed to fork new process\n");
+                return -1;
+            }
+            if(pid) {
+                close(sockfd);
+                close(clifd);
+                exit(0);
+            } else {
+                handle_request(mime_tbl, conf.pub_dir, clifd);
+                close(sockfd);
+                close(clifd);
+            }
         }
         if(pid==0) exit(0);
         close(clifd);
@@ -88,10 +95,4 @@ int init_conf(struct serv_conf* conf) {
         memset(buf, 0, sizeof(param_val));
     }
     return 0;
-}
-
-void terminate_zombie() {
-    int pid;
-    int stat;
-    while((pid=waitpid(-1, &stat, WNOHANG))>0);
 }

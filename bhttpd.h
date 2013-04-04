@@ -13,6 +13,5 @@ struct serv_conf {
 };
 
 int init_conf(struct serv_conf* conf);
-void terminate_zombie();
 
 #endif
