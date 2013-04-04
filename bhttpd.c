@@ -2,7 +2,9 @@
 
 int main(int argc, char **argv) {
     int sockfd, clifd;
+    pid_t pid;
     struct serv_conf conf;
+    struct mime * mime_tbl;
     struct addrinfo *info;
     struct sockaddr_storage cli_addr;
     socklen_t addr_size;
@@ -12,14 +14,32 @@ int main(int argc, char **argv) {
 
     sockfd = init_sock(info);
     if(sockfd==-1) return -1;
+    mime_tbl = init_mime_table(); /* BUG: If use before init_sock, will cause failure */
 
     addr_size = sizeof(cli_addr);
     while((clifd = accept(sockfd, (struct sockaddr *) &cli_addr, &addr_size)) != -1) {
+        char buf[BUFFER_SIZE];
+        memset(buf,0,sizeof buf);
+
         /* TODO: Fork new process to handle request */
         /* TODO: Send local files to client */
+        if((pid = fork()) == -1) {
+            fprintf(stderr, "Failed to fork new process\n");
+            return -1;
+        }
+
+        if(pid) {
+            /* Parent process */
+        } else {
+            /* Child process */
+            handle_request(mime_tbl, conf.pub_dir, clifd);
+            close(sockfd);
+            close(clifd);
+        }
+        if(pid==0) exit(0);
         close(clifd);
     }
-
+    puts("here");
     return 0;
 }
 

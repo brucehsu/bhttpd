@@ -1,7 +1,8 @@
 #ifndef BHTTTPD_H
-#define BUFFER_SIZE 8192
+#include "const.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "netlibs.h"
 #include "httplibs.h"
 

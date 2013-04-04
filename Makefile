@@ -1,6 +1,6 @@
 CC=gcc
 OPTS=-o bhttpd
-OBJ=bhttpd.c netlibs.c
+OBJ=bhttpd.c netlibs.c httplibs.c
 
 all:
 	$(CC) $(OBJ) $(OPTS)
