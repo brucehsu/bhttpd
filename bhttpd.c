@@ -16,8 +16,14 @@ int main(int argc, char **argv) {
     if(sockfd==-1) return -1;
     mime_tbl = init_mime_table(); /* BUG: If use before init_sock, will cause failure */
 
+    struct sigaction act;
+    act.sa_handler = terminate_zombie;
+    act.sa_flags = SA_NOCLDSTOP;
+    sigaction( SIGCHLD, &act, 0);
+
     addr_size = sizeof(cli_addr);
-    while((clifd = accept(sockfd, (struct sockaddr *) &cli_addr, &addr_size)) != -1) {
+    while(1) {
+        clifd = accept(sockfd, (struct sockaddr *) &cli_addr, &addr_size);
         char buf[BUFFER_SIZE];
         memset(buf,0,sizeof buf);
 
@@ -39,7 +45,6 @@ int main(int argc, char **argv) {
         if(pid==0) exit(0);
         close(clifd);
     }
-    puts("here");
     return 0;
 }
 
@@ -83,4 +88,10 @@ int init_conf(struct serv_conf* conf) {
         memset(buf, 0, sizeof(param_val));
     }
     return 0;
+}
+
+void terminate_zombie() {
+    int pid;
+    int stat;
+    while((pid=waitpid(-1, &stat, WNOHANG))>0);
 }
