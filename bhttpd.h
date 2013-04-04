@@ -10,8 +10,11 @@
 struct serv_conf {
     char* port;
     char* pub_dir;
+    int workers;
+    int requests;
 };
 
 int init_conf(struct serv_conf* conf);
+void terminate_zombie();
 
 #endif

@@ -1,7 +1,9 @@
 #include "bhttpd.h"
 
+static int worker_count = 0;
+
 int main(int argc, char **argv) {
-    int sockfd, clifd, fork_stat;
+    int sockfd, clifd, fork_stat, request_count;
     pid_t pid;
     struct serv_conf conf;
     struct mime * mime_tbl;
@@ -16,41 +18,38 @@ int main(int argc, char **argv) {
     sockfd = init_sock(info);
     if(sockfd==-1) return -1;
 
+    struct sigaction act;
+    act.sa_handler = terminate_zombie;
+    act.sa_flags = SA_NOCLDSTOP;
+    sigaction( SIGCHLD, &act, 0);
+
+
     addr_size = sizeof(cli_addr);
     while(1) {
-        clifd = accept(sockfd, (struct sockaddr *) &cli_addr, &addr_size);
-        char buf[BUFFER_SIZE];
-        memset(buf,0,sizeof buf);
-
-        /* TODO: Fork new process to handle request */
-        /* TODO: Send local files to client */
-        if((pid = fork()) == -1) {
-            fprintf(stderr, "Failed to fork new process\n");
-            return -1;
-        }
-
-        if(pid) {
-            /* Parent process */
-            waitpid(pid, &fork_stat, 0);
-        } else {
-            /* Child process */
-            /* Use Double Fork to eliminate zombie process*/
+        /* Create worker process */
+        for(;worker_count<conf.workers;worker_count++) {
             if((pid = fork()) == -1) {
                 fprintf(stderr, "Failed to fork new process\n");
                 return -1;
             }
-            if(pid) {
-                close(sockfd);
-                close(clifd);
-                exit(0);
-            } else {
-                handle_request(mime_tbl, conf.pub_dir, clifd);
-                close(sockfd);
-                close(clifd);
+            if(pid==0) {
+                break;
             }
         }
-        if(pid==0) exit(0);
-        close(clifd);
+
+        if(pid==0) {
+            /* Worker Process */
+            for(request_count=0;request_count<conf.requests;request_count++) {
+                clifd = accept(sockfd, (struct sockaddr *) &cli_addr, &addr_size);
+                handle_request(mime_tbl, conf.pub_dir, clifd);
+                close(clifd);
+            }
+            close(sockfd);
+            exit(0);
+        } else {
+            /* Parent Process waits for any worker to exit */
+            waitpid(-1,&fork_stat,0);
+        }
     }
     return 0;
 }
@@ -63,8 +62,8 @@ int init_conf(struct serv_conf* conf) {
     char param_val[BUFFER_SIZE];
 
     memset(buf, 0, sizeof(buf));
-    memset(buf, 0, sizeof(param_name));
-    memset(buf, 0, sizeof(param_val));
+    memset(param_name, 0, sizeof(param_name));
+    memset(param_val, 0, sizeof(param_val));
 
     if ((fp=fopen("serv.conf","r"))==0){
         fprintf(stderr, "Could not read configuration file\n");
@@ -88,11 +87,23 @@ int init_conf(struct serv_conf* conf) {
             conf->pub_dir = (char*) malloc(sizeof(char)*val_len);
             memset(conf->pub_dir, 0, sizeof(char)*val_len);
             strncpy(conf->pub_dir, param_val, val_len);
+        } else if(strcmp("WORKERS", param_name)==0) {
+            conf->workers = atoi(param_val);
+        } else if(strcmp("REQUEST_PER_WORKER", param_name)==0) {
+            conf->requests = atoi(param_val);
         }
 
-        memset(buf, 0, sizeof(buf));
-        memset(buf, 0, sizeof(param_name));
-        memset(buf, 0, sizeof(param_val));
+        memset(buf, 0, sizeof buf);
+        memset(param_name, 0, sizeof param_name);
+        memset(param_val, 0, sizeof param_val);
     }
     return 0;
+}
+
+void terminate_zombie() {
+    int pid;
+    int stat;
+    while((pid=waitpid(-1, &stat, WNOHANG))>0) {
+        worker_count--;
+    }
 }
