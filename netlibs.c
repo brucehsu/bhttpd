@@ -39,7 +39,7 @@ int init_sock(const struct addrinfo *info) {
 }
 
 int send_file(const char *file_path, const int sockfd) {
-    int len=0;
+    int len=0, read=0;
     char rbuf[BUFFER_SIZE];
     FILE *fp = 0;
 
@@ -49,9 +49,10 @@ int send_file(const char *file_path, const int sockfd) {
         return -1;
     }
 
-    while(!feof(fp) && fread(rbuf, 1, 1, fp)) {
-        write_socket(rbuf, 1, sockfd);
-        ++len;
+    while(!feof(fp) && (read=fread(rbuf, 1, BUFFER_SIZE, fp))) {
+        write_socket(rbuf, read, sockfd);
+        memset(rbuf, 0, sizeof rbuf);
+        len+=read;
     }
     return len;
 }
