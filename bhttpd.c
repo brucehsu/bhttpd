@@ -11,10 +11,10 @@ int main(int argc, char **argv) {
 
     init_conf(&conf);
     init_info(conf.port, &info);
+    mime_tbl = init_mime_table();
 
     sockfd = init_sock(info);
     if(sockfd==-1) return -1;
-    mime_tbl = init_mime_table(); /* BUG: If use before init_sock, will cause failure */
 
     addr_size = sizeof(cli_addr);
     while(1) {
