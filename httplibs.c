@@ -9,8 +9,6 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
     read_line(buf, sockfd);
     sscanf(buf, "%s %s %s", basic_request[METHOD], basic_request[PATH], basic_request[PROC]);
 
-    // while(read_socket(buf, 1, sockfd)); /* Read the rest */
-
     const int type = parse_request_type(basic_request[METHOD]);
     strncat(local_path, path_prefix, BUFFER_SIZE-1);
     strncat(local_path, basic_request[PATH], BUFFER_SIZE-1);
@@ -32,10 +30,9 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
             write_socket(FLD_CONTENT_TYPE, strlen(FLD_CONTENT_TYPE), sockfd);
             content_type = find_content_type(mime_tbl, determine_ext(local_path));
             write_socket(content_type, strlen(content_type), sockfd);
-            write_socket(";\n", 2, sockfd);
+            write_socket("\r\n", 2, sockfd);
             write_socket("\r\n", 2, sockfd);
             send_file(local_path, sockfd);
-            write_socket("\r\n", 2, sockfd);
         }
         fclose(fp);
     } else if(type==POST) {
@@ -45,7 +42,6 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
         write_socket("\r\n", 2, sockfd);
         write_socket("\r\n", 2, sockfd);
     }
-
     return 0;
 }
 
