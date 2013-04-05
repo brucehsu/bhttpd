@@ -42,6 +42,13 @@ int main(int argc, char **argv) {
             /* Worker Process */
             for(request_count=0;request_count<conf.requests;request_count++) {
                 clifd = accept(sockfd, (struct sockaddr *) &cli_addr, &addr_size);
+                if(cli_addr.ss_family==AF_INET) {
+                    /* IPv4 */
+                    struct sockaddr_in *cli = (struct sockaddr_in*) &cli_addr;
+                    setenv("REMOTE_ADDR", inet_ntoa(cli->sin_addr), 1);
+                } else {
+                    /* IPv6 */
+                }
                 handle_request(mime_tbl, conf.pub_dir, clifd);
                 close(clifd);
             }

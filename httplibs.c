@@ -46,9 +46,6 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
                 write_socket("text/html", strlen("text/html"), sockfd);
                 if(query) {
                     setenv("QUERY_STRING", query, 1);
-                    char content_len[BUFFER_SIZE];
-                    sprintf(content_len, "%d", (int)strlen(query));
-                    setenv("CONTENT_LENGTH", content_len, 1);
                 }
 
                 if(pipe(cp)<0) {
@@ -66,14 +63,17 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
                     close(sockfd);
                     close(cp[0]);
                     dup2(cp[1], STDOUT_FILENO);
-                    execlp("php-cgi", "php-cgi", local_path, (char*) 0);
+                    execlp("php-cgi", "php-cgi", "-n", local_path, (char*) 0);
                     exit(0);
                 } else {
                     close(cp[1]);
                     int len;
-                    while((len=read(cp[0], buf, 3))>0) {
+                    while((len=read(cp[0], buf, BUFFER_SIZE))>0) {
+                        int i;
                         buf[len] = '\0';
-                        write_socket(buf, len, sockfd);
+                        for(i=0;i<len;i++) {
+                            write_socket(buf+i, 1, sockfd);
+                        }
                     }
                     waitpid((pid_t)pid, &fork_stat, 0);
                     write_socket("\r\n", 2, sockfd);
@@ -163,15 +163,22 @@ char * determine_ext(const char *path) {
 
 int build_cgi_env(const char* local_path, const char *uri, const int req_type) {
     char script_filename[BUFFER_SIZE];
+    const char *script_name;
     strcat(script_filename, getenv("PWD"));
     strcat(script_filename, "/");
     strcat(script_filename, local_path);
+
+    script_name = local_path;
+    while(*script_name!=0) ++script_name;
+    while(*script_name!='/') --script_name;
+    script_name++;
 
     setenv("GATEWAY_INTERFACE", "CGI/1.1", 1);
     setenv("REQUEST_URI", uri, 1);
     setenv("SERVER_PROTOCOL", "HTTP/1.1", 1);
     setenv("REDIRECT_STATUS", "200", 1);
     setenv("SCRIPT_FILENAME", script_filename, 1);
+    setenv("SCRIPT_NAME", script_name, 1);
 
     if(req_type==GET) {
         setenv("REQUEST_METHOD", "GET", 1);
