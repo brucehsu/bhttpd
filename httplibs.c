@@ -19,6 +19,11 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
         ++query;
     }
 
+    /* Add default page */
+    if(strlen(basic_request[PATH])==1&&basic_request[PATH][0]=='/') {
+        strcat(basic_request[PATH], "index.htm");
+    }
+
     strncat(local_path, path_prefix, BUFFER_SIZE-1);
     strncat(local_path, basic_request[PATH], BUFFER_SIZE-1);
 
@@ -31,13 +36,9 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
         FILE *fp = fopen(local_path, "r");
         if(fp==0) {
             /* File doesn't exist */
-            if(strlen(basic_request[PATH])==1&&basic_request[PATH][0]=='/') {
-                /* TODO: Send default page */
-            } else {
-                write_socket(RES_404, strlen(RES_404), sockfd);
-                write_socket("\r\n", 2, sockfd);
-                write_socket("\r\n", 2, sockfd);
-            }
+            write_socket(RES_404, strlen(RES_404), sockfd);
+            write_socket("\r\n", 2, sockfd);
+            write_socket("\r\n", 2, sockfd);
         } else {
             write_socket(RES_200, strlen(RES_200), sockfd);
             content_type = find_content_type(mime_tbl, determine_ext(local_path));
