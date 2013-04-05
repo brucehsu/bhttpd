@@ -12,6 +12,7 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
     const int type = parse_request_type(basic_request[METHOD]);
     strncat(local_path, path_prefix, BUFFER_SIZE-1);
     strncat(local_path, basic_request[PATH], BUFFER_SIZE-1);
+    fprintf(stderr, "Worker %d: %s %s\n", getpid(), basic_request[METHOD], basic_request[PATH]);
 
     write_socket(STR_PROC, strlen(STR_PROC), sockfd);
     if(type==GET) {
