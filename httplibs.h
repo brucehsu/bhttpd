@@ -27,4 +27,6 @@ int parse_request_type(const char *buf);
 struct mime * init_mime_table();
 char * find_content_type(const struct mime *tbl, const char *ext);
 char * determine_ext(const char *path);
+int build_cgi_env(const char* local_path, const char *uri, const int req_type);
+char * has_parameter(const char *uri);
 #endif

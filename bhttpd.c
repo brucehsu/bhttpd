@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
     act.sa_flags = SA_NOCLDSTOP;
     sigaction( SIGCHLD, &act, 0);
 
+    setenv("SERVER_PORT", conf.port, 1);
 
     addr_size = sizeof(cli_addr);
     while(1) {
