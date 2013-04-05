@@ -38,7 +38,6 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
             /* File doesn't exist */
             write_socket(RES_404, strlen(RES_404), sockfd);
             write_socket("\r\n", 2, sockfd);
-            write_socket("\r\n", 2, sockfd);
         } else {
             write_socket(RES_200, strlen(RES_200), sockfd);
             content_type = find_content_type(mime_tbl, determine_ext(local_path));
