@@ -89,6 +89,69 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
         fclose(fp);
     } else if(type==POST) {
         /* TODO: POST action */
+        int post_pipe[2];
+        char content_len[BUFFER_SIZE];
+        write_socket(RES_200, strlen(RES_200), sockfd);
+        memset(buf, 0, sizeof buf);
+
+        while(read_line(buf, sockfd)) {
+            if(buf[0]=='\r') break;
+            char *ptr = buf;
+            while(*ptr!=':') ++ptr;
+            *ptr = 0;
+            if(strcmp("Content-Type", buf)==0) {
+                setenv("CONTENT_TYPE", str_strip(ptr+=2), 1);
+            }
+            memset(buf, 0, sizeof buf);
+        }
+
+        memset(buf, 0, sizeof buf);
+        read_socket(buf, BUFFER_SIZE, sockfd);
+        sprintf(content_len, "%d", (int) strlen(buf));
+        setenv("CONTENT_LENGTH", content_len, 1);
+
+        setenv("QUERY_STRING", buf, 1);
+
+        if(pipe(cp)<0||pipe(post_pipe)<0) {
+            fprintf(stderr, "Cannot pipe\n");
+            return -1;
+        }
+
+        pid_t pid;
+        if((pid = fork()) == -1) {
+            fprintf(stderr, "Failed to fork new process\n");
+            return -1;
+        }
+
+        if(pid==0) {
+            close(sockfd);
+            close(cp[0]);
+            close(post_pipe[1]);
+            dup2(post_pipe[0], STDIN_FILENO);
+            close(post_pipe[0]);
+            dup2(cp[1], STDOUT_FILENO);
+            execlp("php-cgi", "php-cgi", local_path, (char*) 0);
+            exit(0);
+        } else {
+            close(post_pipe[0]);
+            close(cp[1]);
+            write(post_pipe[1], buf, strlen(buf)+1);
+            close(post_pipe[1]);
+            memset(buf, 0, sizeof buf);
+            int len;
+            while((len=read(cp[0], buf, BUFFER_SIZE))>0) {
+                int i;
+                buf[len] = '\0';
+                for(i=0;i<len;i++) {
+                    write_socket(buf+i, 1, sockfd);
+                }
+            }
+            waitpid((pid_t)pid, &fork_stat, 0);
+            close(cp[0]);
+            write_socket("\r\n", 2, sockfd);
+            write_socket("\r\n", 2, sockfd);
+        }
+
     } else {
         write_socket(RES_400, strlen(RES_400), sockfd);
         write_socket("\r\n", 2, sockfd);
@@ -163,22 +226,18 @@ char * determine_ext(const char *path) {
 
 int build_cgi_env(const char* local_path, const char *uri, const int req_type) {
     char script_filename[BUFFER_SIZE];
-    const char *script_name;
+    memset(script_filename, 0, sizeof script_filename);
     strcat(script_filename, getenv("PWD"));
     strcat(script_filename, "/");
     strcat(script_filename, local_path);
 
-    script_name = local_path;
-    while(*script_name!=0) ++script_name;
-    while(*script_name!='/') --script_name;
-    script_name++;
-
+    setenv("SERVER_NAME", "localhost", 1);
     setenv("GATEWAY_INTERFACE", "CGI/1.1", 1);
     setenv("REQUEST_URI", uri, 1);
     setenv("SERVER_PROTOCOL", "HTTP/1.1", 1);
     setenv("REDIRECT_STATUS", "200", 1);
     setenv("SCRIPT_FILENAME", script_filename, 1);
-    setenv("SCRIPT_NAME", script_name, 1);
+    setenv("SCRIPT_NAME", uri, 1);
 
     if(req_type==GET) {
         setenv("REQUEST_METHOD", "GET", 1);
@@ -196,4 +255,13 @@ char * has_parameter(const char *uri) {
     }
 
     return 0;
+}
+
+char * str_strip(char *str) {
+    char *ptr = str;
+    while(!(isspace(*ptr))) {
+        ptr++;
+    }
+    *ptr=0;
+    return str;
 }

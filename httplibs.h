@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 #include "netlibs.h"
 
 struct mime {
@@ -29,4 +30,5 @@ char * find_content_type(const struct mime *tbl, const char *ext);
 char * determine_ext(const char *path);
 int build_cgi_env(const char* local_path, const char *uri, const int req_type);
 char * has_parameter(const char *uri);
+char * str_strip(char *str);
 #endif

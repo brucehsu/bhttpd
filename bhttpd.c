@@ -44,8 +44,13 @@ int main(int argc, char **argv) {
                 clifd = accept(sockfd, (struct sockaddr *) &cli_addr, &addr_size);
                 if(cli_addr.ss_family==AF_INET) {
                     /* IPv4 */
+                    char itoa[BUFFER_SIZE];
+                    memset(itoa, 0, sizeof itoa);
                     struct sockaddr_in *cli = (struct sockaddr_in*) &cli_addr;
                     setenv("REMOTE_ADDR", inet_ntoa(cli->sin_addr), 1);
+                    setenv("REMOTE_HOST", inet_ntoa(cli->sin_addr), 1);
+                    sprintf(itoa, "%d", ntohs(cli->sin_port));
+                    setenv("REMOTE_PORT", itoa, 1);
                 } else {
                     /* IPv6 */
                 }
