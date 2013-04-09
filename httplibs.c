@@ -45,6 +45,7 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
             if(strcmp("php", determine_ext(local_path))==0) {
                 write_socket("text/html", strlen("text/html"), sockfd);
                 if(query) {
+                    setenv("CONTENT_LENGTH", "", 1);
                     setenv("QUERY_STRING", query, 1);
                 }
 
@@ -71,10 +72,13 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
                     while((len=read(cp[0], buf, BUFFER_SIZE))>0) {
                         int i;
                         buf[len] = '\0';
+                        str_strip(buf);
+                        len = strlen(buf);
                         for(i=0;i<len;i++) {
                             write_socket(buf+i, 1, sockfd);
                         }
                     }
+                    close(cp[0]);
                     waitpid((pid_t)pid, &fork_stat, 0);
                     write_socket("\r\n", 2, sockfd);
                     write_socket("\r\n", 2, sockfd);
@@ -259,9 +263,11 @@ char * has_parameter(const char *uri) {
 
 char * str_strip(char *str) {
     char *ptr = str;
-    while(!(isspace(*ptr))) {
-        ptr++;
+    while(*ptr!=0) ptr++;
+    --ptr;
+    while((isspace(*ptr))) {
+        *ptr = 0;
+        ptr--;
     }
-    *ptr=0;
     return str;
 }
