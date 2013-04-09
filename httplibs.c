@@ -231,8 +231,6 @@ char * determine_ext(const char *path) {
 int build_cgi_env(const char* local_path, const char *uri, const int req_type) {
     char script_filename[BUFFER_SIZE];
     memset(script_filename, 0, sizeof script_filename);
-    strcat(script_filename, getenv("PWD"));
-    strcat(script_filename, "/");
     strcat(script_filename, local_path);
 
     setenv("SERVER_NAME", "localhost", 1);
