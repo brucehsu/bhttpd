@@ -23,12 +23,28 @@ struct mime {
     struct mime *next;
 }; 
 
-int handle_request(const struct mime *mime_tbl, const char *path_prefix ,const int sockfd);
+struct cgi {
+    char *ext;
+    char *cmd;
+    struct cgi *next;
+};
+
+struct request {
+    int type;
+    char * uri;
+    char * local_path;
+    char * query_string;
+};
+
+int handle_request(const struct mime *mime_tbl, const struct cgi *cgi_tbl, const char *path_prefix ,const int sockfd);
+int handle_cgi(const struct request *req, const struct cgi *cgi, const int sockfd);
 int parse_request_type(const char *buf);
 struct mime * init_mime_table();
 char * find_content_type(const struct mime *tbl, const char *ext);
+char * find_cgi_command(const struct cgi *tbl, const char *ext);
 char * determine_ext(const char *path);
-int build_cgi_env(const char* local_path, const char *uri, const int req_type);
+int build_cgi_env(const struct request *req);
 char * has_parameter(const char *uri);
 char * str_strip(char *str);
+struct cgi * init_cgi_table();
 #endif

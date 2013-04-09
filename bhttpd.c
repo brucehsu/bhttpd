@@ -7,6 +7,7 @@ int main(int argc, char **argv) {
     pid_t pid;
     struct serv_conf conf;
     struct mime * mime_tbl;
+    struct cgi * cgi_tbl;
     struct addrinfo *info;
     struct sockaddr_storage cli_addr;
     socklen_t addr_size;
@@ -14,6 +15,7 @@ int main(int argc, char **argv) {
     init_conf(&conf);
     init_info(conf.port, &info);
     mime_tbl = init_mime_table();
+    cgi_tbl = init_cgi_table();
 
     sockfd = init_sock(info);
     if(sockfd==-1) return -1;
@@ -54,7 +56,7 @@ int main(int argc, char **argv) {
                 } else {
                     /* IPv6 */
                 }
-                handle_request(mime_tbl, conf.pub_dir, clifd);
+                handle_request(mime_tbl, cgi_tbl, conf.pub_dir, clifd);
                 close(clifd);
             }
             close(sockfd);

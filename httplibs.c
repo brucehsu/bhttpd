@@ -1,12 +1,12 @@
 #include "httplibs.h"
 
-int handle_request(const struct mime *mime_tbl, const char* path_prefix, const int sockfd) {
+int handle_request(const struct mime *mime_tbl, const struct cgi *cgi_tbl, const char* path_prefix, const int sockfd) {
     char buf[BUFFER_SIZE], local_path[BUFFER_SIZE];
-    char basic_request[3][BUFFER_SIZE], *content_type, *query;
+    char basic_request[3][BUFFER_SIZE], *content_type=0, *query=0;
+    struct request req;
     memset(buf, 0, sizeof buf);
     memset(local_path, 0, sizeof local_path);
-
-    int cp[2], fork_stat;
+    memset(&req, 0, sizeof(struct request));
 
     read_line(buf, sockfd);
     sscanf(buf, "%s %s %s", basic_request[METHOD], basic_request[PATH], basic_request[PROC]);
@@ -27,7 +27,10 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
     strncat(local_path, path_prefix, BUFFER_SIZE-1);
     strncat(local_path, basic_request[PATH], BUFFER_SIZE-1);
 
-    build_cgi_env(local_path, basic_request[PATH], type);
+    req.type = type;
+    req.uri = basic_request[PATH];
+    req.local_path = local_path;
+    req.query_string = query;
 
     fprintf(stderr, "Worker %d: %s %s\n", getpid(), basic_request[METHOD], basic_request[PATH]);
 
@@ -40,50 +43,9 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
             write_socket("\r\n", 2, sockfd);
         } else {
             write_socket(RES_200, strlen(RES_200), sockfd);
-            content_type = find_content_type(mime_tbl, determine_ext(local_path));
-            write_socket(FLD_CONTENT_TYPE, strlen(FLD_CONTENT_TYPE), sockfd);
-            if(strcmp("php", determine_ext(local_path))==0) {
-                write_socket("text/html", strlen("text/html"), sockfd);
-                if(query) {
-                    setenv("CONTENT_LENGTH", "", 1);
-                    setenv("QUERY_STRING", query, 1);
-                }
-
-                if(pipe(cp)<0) {
-                    fprintf(stderr, "Cannot pipe\n");
-                    return -1;
-                }
-
-                pid_t pid;
-                if((pid = fork()) == -1) {
-                    fprintf(stderr, "Failed to fork new process\n");
-                    return -1;
-                }
-
-                if(pid==0) {
-                    close(sockfd);
-                    close(cp[0]);
-                    dup2(cp[1], STDOUT_FILENO);
-                    execlp("php-cgi", "php-cgi", "-n", local_path, (char*) 0);
-                    exit(0);
-                } else {
-                    close(cp[1]);
-                    int len;
-                    while((len=read(cp[0], buf, BUFFER_SIZE))>0) {
-                        int i;
-                        buf[len] = '\0';
-                        str_strip(buf);
-                        len = strlen(buf);
-                        for(i=0;i<len;i++) {
-                            write_socket(buf+i, 1, sockfd);
-                        }
-                    }
-                    close(cp[0]);
-                    waitpid((pid_t)pid, &fork_stat, 0);
-                    write_socket("\r\n", 2, sockfd);
-                    write_socket("\r\n", 2, sockfd);
-                }
-            } else {
+            if(handle_cgi(&req, cgi_tbl, sockfd)==0) {
+                content_type = find_content_type(mime_tbl, determine_ext(req.local_path));
+                write_socket(FLD_CONTENT_TYPE, strlen(FLD_CONTENT_TYPE), sockfd);
                 write_socket(content_type, strlen(content_type), sockfd);
                 write_socket("\r\n", 2, sockfd);
                 write_socket("\r\n", 2, sockfd);
@@ -92,7 +54,65 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
         }
         fclose(fp);
     } else if(type==POST) {
-        /* TODO: POST action */
+        if(handle_cgi(&req, cgi_tbl, sockfd)==0) {
+            return -1;
+        }
+    } else {
+        write_socket(RES_400, strlen(RES_400), sockfd);
+        write_socket("\r\n", 2, sockfd);
+        write_socket("\r\n", 2, sockfd);
+    }
+    return 0;
+}
+
+int handle_cgi(const struct request *req, const struct cgi *cgi, const int sockfd) {
+    char *cmd;
+    char buf[BUFFER_SIZE];
+    int cp[2], fork_stat;
+
+    if(cgi==0) return 0;
+
+    cmd = find_cgi_command(cgi, determine_ext(req->local_path));
+    if(cmd==0) return 0;
+
+    build_cgi_env(req);
+
+    if(req->type==GET) {
+        if(req->query_string) {
+            setenv("CONTENT_LENGTH", "", 1);
+            setenv("QUERY_STRING", req->query_string, 1);
+        }
+
+        if(pipe(cp)<0) {
+            fprintf(stderr, "Cannot pipe\n");
+            return -1;
+        }
+
+        pid_t pid;
+        if((pid = fork()) == -1) {
+            fprintf(stderr, "Failed to fork new process\n");
+            return -1;
+        }
+
+        if(pid==0) {
+            close(sockfd);
+            close(cp[0]);
+            dup2(cp[1], STDOUT_FILENO);
+            execlp(cmd, cmd, req->local_path, (char*) 0);
+            exit(0);
+        } else {
+            close(cp[1]);
+            int len;
+            while((len=read(cp[0], buf, BUFFER_SIZE))>0) {
+                buf[len] = '\0';
+                str_strip(buf);
+                len = strlen(buf);
+                write_socket(buf, len, sockfd);
+            }
+            close(cp[0]);
+            waitpid((pid_t)pid, &fork_stat, 0);
+        }
+    } else if(req->type==POST) {
         int post_pipe[2];
         char content_len[BUFFER_SIZE];
         write_socket(RES_200, strlen(RES_200), sockfd);
@@ -134,7 +154,7 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
             dup2(post_pipe[0], STDIN_FILENO);
             close(post_pipe[0]);
             dup2(cp[1], STDOUT_FILENO);
-            execlp("php-cgi", "php-cgi", local_path, (char*) 0);
+            execlp(cmd, cmd, req->local_path, (char*) 0);
             exit(0);
         } else {
             close(post_pipe[0]);
@@ -144,11 +164,10 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
             memset(buf, 0, sizeof buf);
             int len;
             while((len=read(cp[0], buf, BUFFER_SIZE))>0) {
-                int i;
                 buf[len] = '\0';
-                for(i=0;i<len;i++) {
-                    write_socket(buf+i, 1, sockfd);
-                }
+                str_strip(buf);
+                len = strlen(buf);
+                write_socket(buf, len, sockfd);
             }
             waitpid((pid_t)pid, &fork_stat, 0);
             close(cp[0]);
@@ -156,12 +175,9 @@ int handle_request(const struct mime *mime_tbl, const char* path_prefix, const i
             write_socket("\r\n", 2, sockfd);
         }
 
-    } else {
-        write_socket(RES_400, strlen(RES_400), sockfd);
-        write_socket("\r\n", 2, sockfd);
-        write_socket("\r\n", 2, sockfd);
     }
-    return 0;
+
+    return 1;
 }
 
 int parse_request_type(const char *buf) {
@@ -220,6 +236,14 @@ char * find_content_type(const struct mime *tbl, const char *ext) {
     return 0;
 }
 
+char * find_cgi_command(const struct cgi *tbl, const char *ext) {
+    while(tbl!=0) {
+        if(strcmp(tbl->ext,ext)==0) return tbl->cmd;
+        tbl = tbl->next;
+    }
+    return 0;    
+}
+
 char * determine_ext(const char *path) {
     const int len = strlen(path);
     path += len-1;
@@ -228,17 +252,17 @@ char * determine_ext(const char *path) {
     return (char*)(path+1);
 }
 
-int build_cgi_env(const char* local_path, const char *uri, const int req_type) {
-    char script_filename[BUFFER_SIZE];
-    memset(script_filename, 0, sizeof script_filename);
-    strcat(script_filename, local_path);
+int build_cgi_env(const struct request *req) {
+    const char* local_path = req->local_path;
+    const char* uri = req->uri;
+    const int req_type = req->type;
 
     setenv("SERVER_NAME", "localhost", 1);
     setenv("GATEWAY_INTERFACE", "CGI/1.1", 1);
     setenv("REQUEST_URI", uri, 1);
     setenv("SERVER_PROTOCOL", "HTTP/1.1", 1);
     setenv("REDIRECT_STATUS", "200", 1);
-    setenv("SCRIPT_FILENAME", script_filename, 1);
+    setenv("SCRIPT_FILENAME", local_path, 1);
     setenv("SCRIPT_NAME", uri, 1);
 
     if(req_type==GET) {
@@ -268,4 +292,56 @@ char * str_strip(char *str) {
         ptr--;
     }
     return str;
+}
+
+struct cgi * init_cgi_table() {
+    char buf[BUFFER_SIZE], key[BUFFER_SIZE], val[BUFFER_SIZE];
+    struct cgi *ptr = 0, *init_ptr = 0;
+    FILE *fp = fopen("cgi.conf","r");
+
+    memset(buf, 0, sizeof buf);
+
+    if(fp==0) {
+        fprintf(stderr, "Cannot open cgi.conf\n");
+        fclose(fp);
+        return 0;
+    }
+
+    while(fgets(buf, BUFFER_SIZE, fp)!=0) {
+        str_strip(buf);
+        if(strcmp("[CGI]", buf)!=0) {
+            return 0;
+        }
+        int i;
+        if(ptr==0) {
+            ptr = (struct cgi*) malloc(sizeof(struct cgi));
+            init_ptr = ptr;
+        } else {
+            ptr->next = (struct cgi*) malloc(sizeof(struct cgi));
+            ptr = ptr->next;
+        }
+        ptr->next = 0;
+        for(i=0;i<2;i++) {
+            if(fgets(buf, BUFFER_SIZE, fp)==0) {
+                free(ptr);
+                return 0;
+            }
+            sscanf(buf, "%s %s", key, val);
+
+            if(strcmp("EXTNAME", key)==0) {
+                ptr->ext = (char*) malloc(sizeof(char) * (strlen(val)+1));
+                memset(ptr->ext, 0, sizeof(char) * (strlen(val)+1));
+                strncat(ptr->ext, val, strlen(val));
+            } else if(strcmp("CMD", key)==0) {
+                ptr->cmd = (char*) malloc(sizeof(char) * (strlen(val)+1));
+                memset(ptr->cmd, 0, sizeof(char) * (strlen(val)+1));
+                strncat(ptr->cmd, val, strlen(val));
+            }
+            memset(buf, 0, sizeof buf);
+        }
+    }
+
+    fclose(fp);
+
+    return init_ptr;    
 }
