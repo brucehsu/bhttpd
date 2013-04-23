@@ -32,7 +32,7 @@ int handle_request(const struct mime *mime_tbl, const struct cgi *cgi_tbl, const
     req.local_path = local_path;
     req.query_string = query;
 
-    fprintf(stderr, "Worker %d: %s %s\n", getpid(), basic_request[METHOD], basic_request[PATH]);
+    fprintf(stderr, "%s %s\n", basic_request[METHOD], basic_request[PATH]);
 
     write_socket(STR_PROC, strlen(STR_PROC), sockfd);
     if(type==GET) {

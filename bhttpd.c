@@ -1,10 +1,8 @@
 #include "bhttpd.h"
 
-static int worker_count = 0;
-
 int main(int argc, char **argv) {
-    int sockfd, clifd, fork_stat, request_count;
-    pid_t pid;
+    fd_set allset, rset;
+    int sockfd, clifd, maxfd, readycnt,i;
     struct serv_conf conf;
     struct mime * mime_tbl;
     struct cgi * cgi_tbl;
@@ -20,50 +18,36 @@ int main(int argc, char **argv) {
     sockfd = init_sock(info);
     if(sockfd==-1) return -1;
 
-    struct sigaction act;
-    act.sa_handler = terminate_zombie;
-    act.sa_flags = SA_NOCLDSTOP;
-    sigaction( SIGCHLD, &act, 0);
+    FD_ZERO(&allset);
+    FD_ZERO(&rset);
+    FD_SET(sockfd, &allset);
+    maxfd = sockfd;
 
     setenv("SERVER_PORT", conf.port, 1);
 
     addr_size = sizeof(cli_addr);
+
     while(1) {
-        /* Create worker process */
-        for(;worker_count<conf.workers;worker_count++) {
-            if((pid = fork()) == -1) {
-                fprintf(stderr, "Failed to fork new process\n");
-                return -1;
-            }
-            if(pid==0) {
-                break;
-            }
+        rset = allset;
+        if((readycnt=select(maxfd+1, &rset, NULL, NULL, NULL)) == -1) {
+            fprintf(stderr, "select error\n");
         }
 
-        if(pid==0) {
-            /* Worker Process */
-            for(request_count=0;request_count<conf.requests;request_count++) {
-                clifd = accept(sockfd, (struct sockaddr *) &cli_addr, &addr_size);
-                if(cli_addr.ss_family==AF_INET) {
-                    /* IPv4 */
-                    char itoa[BUFFER_SIZE];
-                    memset(itoa, 0, sizeof itoa);
-                    struct sockaddr_in *cli = (struct sockaddr_in*) &cli_addr;
-                    setenv("REMOTE_ADDR", inet_ntoa(cli->sin_addr), 1);
-                    setenv("REMOTE_HOST", inet_ntoa(cli->sin_addr), 1);
-                    sprintf(itoa, "%d", ntohs(cli->sin_port));
-                    setenv("REMOTE_PORT", itoa, 1);
-                } else {
-                    /* IPv6 */
-                }
-                handle_request(mime_tbl, cgi_tbl, conf.pub_dir, clifd);
-                close(clifd);
+        if(FD_ISSET(sockfd, &rset)) {
+            /* Handle new connection */
+            clifd = accept(sockfd, (struct sockaddr *) &cli_addr, &addr_size);
+            FD_SET(clifd, &allset);
+            if(clifd>maxfd) maxfd = clifd;
+        }
+
+        for(i=0;i<=maxfd;i++) {
+            if(i==sockfd) continue;
+
+            if(FD_ISSET(i, &rset)) {
+                handle_request(mime_tbl, cgi_tbl, conf.pub_dir, i);
+                FD_CLR(i, &allset);
+                close(i);
             }
-            close(sockfd);
-            exit(0);
-        } else {
-            /* Parent Process waits for any worker to exit */
-            waitpid(-1,&fork_stat,0);
         }
     }
     return 0;
@@ -113,12 +97,4 @@ int init_conf(struct serv_conf* conf) {
         memset(param_val, 0, sizeof param_val);
     }
     return 0;
-}
-
-void terminate_zombie() {
-    int pid;
-    int stat;
-    while((pid=waitpid(-1, &stat, WNOHANG))>0) {
-        worker_count--;
-    }
 }
