@@ -58,6 +58,8 @@ int send_file(const char *file_path, const int sockfd) {
         memset(rbuf, 0, sizeof rbuf);
         len+=read;
     }
+
+    fclose(fp);
     return len;
 }
 
