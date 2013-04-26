@@ -17,12 +17,16 @@ int init_info(const char* port, struct addrinfo** serv) {
 } 
 
 int init_sock(const struct addrinfo *info) {
-    int sockfd;
+    int sockfd, opt=1;
 
     sockfd = socket(info->ai_family, info->ai_socktype, info->ai_protocol);
     if(sockfd==-1) {
         fprintf(stderr, "Fail to open socket\n");
         return -1;
+    }
+
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
+        fprintf(stderr, "Fail to set socket option\n");
     }
 
     if(bind(sockfd, info->ai_addr, info->ai_addrlen) == -1) {
