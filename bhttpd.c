@@ -1,8 +1,8 @@
 #include "bhttpd.h"
 
 int main(int argc, char **argv) {
-    fd_set allset, rset;
-    int sockfd, clifd, maxfd, readycnt,i;
+    struct pollfd fds[POLL_MAX];
+    int sockfd, clifd, polled=0, i;
     struct serv_conf conf;
     struct mime * mime_tbl;
     struct cgi * cgi_tbl;
@@ -18,36 +18,39 @@ int main(int argc, char **argv) {
     sockfd = init_sock(info);
     if(sockfd==-1) return -1;
 
-    FD_ZERO(&allset);
-    FD_ZERO(&rset);
-    FD_SET(sockfd, &allset);
-    maxfd = sockfd;
+    memset(fds, 0, sizeof(struct pollfd)*POLL_MAX);
+    for(i=0;i<POLL_MAX;i++) fds[i].fd = -1;
+    fds[0].fd = sockfd;
+    fds[0].events = POLLRDNORM;
 
-    setenv("SERVER_PORT", conf.port, 1);
-
-    addr_size = sizeof(cli_addr);
 
     while(1) {
-        rset = allset;
-        if((readycnt=select(maxfd+1, &rset, NULL, NULL, NULL)) == -1) {
-            fprintf(stderr, "select error\n");
+        polled = poll(fds, POLL_MAX, -1);
+        if(polled==-1) {
+            fprintf(stderr, "poll() error\n");
+            continue;
         }
 
-        if(FD_ISSET(sockfd, &rset)) {
+        if(fds[0].revents & POLLRDNORM) {
             /* Handle new connection */
             clifd = accept(sockfd, (struct sockaddr *) &cli_addr, &addr_size);
-            FD_SET(clifd, &allset);
-            if(clifd>maxfd) maxfd = clifd;
+            for(i=1;i<POLL_MAX;i++) {
+                if(fds[i].fd==-1) {
+                    fds[i].fd = clifd;
+                    fds[i].events = POLLRDNORM;
+                    break;
+                }
+            }
         }
 
-        for(i=0;i<=maxfd;i++) {
-            if(i==sockfd) continue;
-
-            if(FD_ISSET(i, &rset)) {
-                handle_request(mime_tbl, cgi_tbl, conf.pub_dir, i);
-                FD_CLR(i, &allset);
-                close(i);
+        for(i=1;i<POLL_MAX;i++) {
+            if(fds[i].fd!=-1&&(fds[i].revents & POLLRDNORM)) {
+                handle_request(mime_tbl, cgi_tbl, conf.pub_dir, fds[i].fd);
+                close(fds[i].fd);
+                fds[i].fd = -1;
+                --polled;
             }
+            if(polled==0) break;
         }
     }
     return 0;

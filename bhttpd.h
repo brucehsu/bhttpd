@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
+#include <poll.h>
 #include "netlibs.h"
 #include "httplibs.h"
 
@@ -15,6 +16,5 @@ struct serv_conf {
 };
 
 int init_conf(struct serv_conf* conf);
-void terminate_zombie();
 
 #endif
