@@ -89,7 +89,7 @@ int handle_cgi(const struct request *req, const struct cgi *cgi, const int sockf
         }
 
         pid_t pid;
-        if((pid = fork()) == -1) {
+        if((pid = vfork()) == -1) {
             fprintf(stderr, "Failed to fork new process\n");
             return -1;
         }
@@ -142,7 +142,7 @@ int handle_cgi(const struct request *req, const struct cgi *cgi, const int sockf
         }
 
         pid_t pid;
-        if((pid = fork()) == -1) {
+        if((pid = vfork()) == -1) {
             fprintf(stderr, "Failed to fork new process\n");
             return -1;
         }
