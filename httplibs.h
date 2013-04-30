@@ -21,6 +21,7 @@ struct mime {
     char *ext;
     char *type;
     struct mime *next;
+    struct mime *next_level;
 }; 
 
 struct cgi {

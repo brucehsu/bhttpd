@@ -191,8 +191,9 @@ int parse_request_type(const char *buf) {
 
 struct mime * init_mime_table() {
     char buf[BUFFER_SIZE], ext[BUFFER_SIZE], type[BUFFER_SIZE];
-    struct mime *ptr = 0, *init_ptr = 0;
+    struct mime *ptr = 0, *root = 0;
     FILE *fp = fopen("mime.types","r");
+    int i;
 
     memset(buf, 0, sizeof buf);
 
@@ -202,36 +203,80 @@ struct mime * init_mime_table() {
         return 0;
     }
 
+    /* Initialize two-level structure */
+    root = (struct mime*) malloc(sizeof(struct mime));
+    memset(root, 0, sizeof(struct mime));
+    root->next_level = (struct mime*) malloc(sizeof(struct mime) * 26);
+    memset(root->next_level, 0, sizeof(struct mime) * 26);
+    for(i=0;i<26;i++) {
+        root->next_level[i].next_level = (struct mime*) malloc(sizeof(struct mime) * 26);
+        memset(root->next_level[i].next_level, 0, sizeof(struct mime) * 26);
+    }
+
     while(fgets(buf, BUFFER_SIZE, fp)!=0) {
         sscanf(buf, "%s %s", ext, type);
 
-        if(ptr==0) {
-            ptr = (struct mime*) malloc(sizeof(struct mime));
-            init_ptr = ptr;
-        } else {
-            ptr->next = (struct mime*) malloc(sizeof(struct mime));
-            ptr = ptr->next;
-        }
-        ptr->next = 0;
+        /* Create new node in advance */
+        ptr = (struct mime*) malloc(sizeof(struct mime));
+        memset(ptr, 0, sizeof(struct mime));
         ptr->ext = (char*) malloc(sizeof(char) * (strlen(ext)+1));
-        memset(ptr->ext, 0, sizeof(char) * (strlen(ext)+1));
-        strncat(ptr->ext, ext, strlen(ext));
         ptr->type = (char*) malloc(sizeof(char) * (strlen(type)+1));
-        memset(ptr->type, 0, sizeof(char) * (strlen(type)+1));
+        strncat(ptr->ext, ext, strlen(ext));
         strncat(ptr->type, type, strlen(type));
 
+        struct mime *first_level = &(root->next_level[ext[0]-'a']);
+        struct mime *second_level = &(first_level->next_level[ext[1]-'a']);
+
+        if(strlen(ext)==1) {
+            if(first_level->ext==0) {
+                /* Initial first node of level 1 */
+                first_level->ext = (char*) malloc(sizeof(char) * (strlen(ext)+1));
+                memset(first_level->ext, 0, sizeof(char) * (strlen(ext)+1));
+                first_level->type = (char*) malloc(sizeof(char) * (strlen(type)+1));
+                memset(first_level->type, 0, sizeof(char) * (strlen(type)+1));
+                strncat(first_level->ext, ext, strlen(ext));
+                strncat(first_level->type, type, strlen(type));
+                free(ptr);
+            } else {
+                /* Append node to level 1 */
+                /* Set first_level to the last node and append previously created ptr to it*/
+                while(first_level->next!=0) first_level = first_level->next;
+                first_level->next = ptr;
+            }
+        } else {
+            if(second_level->ext==0) {
+                /* Initial first node of level 2 */
+                second_level->ext = (char*) malloc(sizeof(char) * (strlen(ext)+1));
+                memset(second_level->ext, 0, sizeof(char) * (strlen(ext)+1));
+                second_level->type = (char*) malloc(sizeof(char) * (strlen(type)+1));
+                memset(second_level->type, 0, sizeof(char) * (strlen(type)+1));
+                strncat(second_level->ext, ext, strlen(ext));
+                strncat(second_level->type, type, strlen(type));
+                free(ptr);
+            } else {
+                /* Append node to level 1 */
+                /* Set second_level to the last node and append previously created ptr to it*/
+                while(second_level->next!=0) second_level = second_level->next;
+                second_level->next = ptr;
+            }
+        }
         memset(buf, 0, sizeof buf);
     }
 
     fclose(fp);
-
-    return init_ptr;
+    return root;
 }
 
 char * find_content_type(const struct mime *tbl, const char *ext) {
-    while(tbl!=0) {
-        if(strcmp(tbl->ext,ext)==0) return tbl->type;
-        tbl = tbl->next;
+    struct mime *first_level = &(tbl->next_level[ext[0]-'a']);
+    struct mime *second_level = &(first_level->next_level[ext[1]-'a']);
+    struct mime *start = (strlen(ext)==1) ? first_level : second_level;
+
+    while(start) {
+        if(strcmp(ext, start->ext)==0) {
+            return start->type;
+        }
+        start = start->next;
     }
     return 0;
 }
@@ -296,7 +341,7 @@ char * str_strip(char *str) {
 
 struct cgi * init_cgi_table() {
     char buf[BUFFER_SIZE], key[BUFFER_SIZE], val[BUFFER_SIZE];
-    struct cgi *ptr = 0, *init_ptr = 0;
+    struct cgi *ptr = 0, *root = 0;
     FILE *fp = fopen("cgi.conf","r");
 
     memset(buf, 0, sizeof buf);
@@ -315,7 +360,7 @@ struct cgi * init_cgi_table() {
         int i;
         if(ptr==0) {
             ptr = (struct cgi*) malloc(sizeof(struct cgi));
-            init_ptr = ptr;
+            root = ptr;
         } else {
             ptr->next = (struct cgi*) malloc(sizeof(struct cgi));
             ptr = ptr->next;
@@ -343,5 +388,5 @@ struct cgi * init_cgi_table() {
 
     fclose(fp);
 
-    return init_ptr;    
+    return root;    
 }
