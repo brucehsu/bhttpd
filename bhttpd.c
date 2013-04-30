@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
 
         for(i=1;i<POLL_MAX;i++) {
             if(fds[i].fd!=-1&&(fds[i].revents & POLLRDNORM)) {
-                handle_request(mime_tbl, cgi_tbl, conf.pub_dir, fds[i].fd);
+                handle_request(mime_tbl, cgi_tbl, conf.pub_dir, conf.default_page, fds[i].fd);
                 close(fds[i].fd);
                 fds[i].fd = -1;
                 --polled;
@@ -89,10 +89,10 @@ int init_conf(struct serv_conf* conf) {
             conf->pub_dir = (char*) malloc(sizeof(char)*val_len);
             memset(conf->pub_dir, 0, sizeof(char)*val_len);
             strncpy(conf->pub_dir, param_val, val_len);
-        } else if(strcmp("WORKERS", param_name)==0) {
-            conf->workers = atoi(param_val);
-        } else if(strcmp("REQUEST_PER_WORKER", param_name)==0) {
-            conf->requests = atoi(param_val);
+        } else if(strcmp("DEFAULT_PAGE", param_name)==0) {
+            conf->default_page = (char*) malloc(sizeof(char)*val_len);
+            memset(conf->default_page, 0, sizeof(char)*val_len);
+            strncpy(conf->default_page, param_val, val_len);
         }
 
         memset(buf, 0, sizeof buf);

@@ -11,8 +11,7 @@
 struct serv_conf {
     char* port;
     char* pub_dir;
-    int workers;
-    int requests;
+    char* default_page;
 };
 
 int init_conf(struct serv_conf* conf);

@@ -1,6 +1,6 @@
 #include "httplibs.h"
 
-int handle_request(const struct mime *mime_tbl, const struct cgi *cgi_tbl, const char* path_prefix, const int sockfd) {
+int handle_request(const struct mime *mime_tbl, const struct cgi *cgi_tbl, const char *path_prefix, const char *default_page, const int sockfd) {
     char buf[BUFFER_SIZE], local_path[BUFFER_SIZE];
     char basic_request[3][BUFFER_SIZE], *content_type=0, *query=0;
     struct request req;
@@ -21,7 +21,7 @@ int handle_request(const struct mime *mime_tbl, const struct cgi *cgi_tbl, const
 
     /* Add default page */
     if(strlen(basic_request[PATH])==1&&basic_request[PATH][0]=='/') {
-        strcat(basic_request[PATH], "index.htm");
+        strcat(basic_request[PATH], default_page);
     }
 
     strncat(local_path, path_prefix, BUFFER_SIZE-1);

@@ -37,7 +37,7 @@ struct request {
     char * query_string;
 };
 
-int handle_request(const struct mime *mime_tbl, const struct cgi *cgi_tbl, const char *path_prefix ,const int sockfd);
+int handle_request(const struct mime *mime_tbl, const struct cgi *cgi_tbl, const char *path_prefix, const char *default_page, const int sockfd);
 int handle_cgi(const struct request *req, const struct cgi *cgi, const int sockfd);
 int parse_request_type(const char *buf);
 struct mime * init_mime_table();
