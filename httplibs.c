@@ -226,39 +226,21 @@ struct mime * init_mime_table() {
 
         struct mime *first_level = &(root->next_level[ext[0]-'a']);
         struct mime *second_level = &(first_level->next_level[ext[1]-'a']);
+        struct mime *start = (strlen(ext)==1) ? first_level : second_level;
 
-        if(strlen(ext)==1) {
-            if(first_level->ext==0) {
-                /* Initial first node of level 1 */
-                first_level->ext = (char*) malloc(sizeof(char) * (strlen(ext)+1));
-                memset(first_level->ext, 0, sizeof(char) * (strlen(ext)+1));
-                first_level->type = (char*) malloc(sizeof(char) * (strlen(type)+1));
-                memset(first_level->type, 0, sizeof(char) * (strlen(type)+1));
-                strncat(first_level->ext, ext, strlen(ext));
-                strncat(first_level->type, type, strlen(type));
-                free(ptr);
-            } else {
-                /* Append node to level 1 */
-                /* Set first_level to the last node and append previously created ptr to it*/
-                while(first_level->next!=0) first_level = first_level->next;
-                first_level->next = ptr;
-            }
+        if(start->ext==0) {
+            /* Use existing node if the node is empty */
+            start->ext = (char*) malloc(sizeof(char) * (strlen(ext)+1));
+            memset(start->ext, 0, sizeof(char) * (strlen(ext)+1));
+            start->type = (char*) malloc(sizeof(char) * (strlen(type)+1));
+            memset(start->type, 0, sizeof(char) * (strlen(type)+1));
+            strncat(start->ext, ext, strlen(ext));
+            strncat(start->type, type, strlen(type));
+            free(ptr);
         } else {
-            if(second_level->ext==0) {
-                /* Initial first node of level 2 */
-                second_level->ext = (char*) malloc(sizeof(char) * (strlen(ext)+1));
-                memset(second_level->ext, 0, sizeof(char) * (strlen(ext)+1));
-                second_level->type = (char*) malloc(sizeof(char) * (strlen(type)+1));
-                memset(second_level->type, 0, sizeof(char) * (strlen(type)+1));
-                strncat(second_level->ext, ext, strlen(ext));
-                strncat(second_level->type, type, strlen(type));
-                free(ptr);
-            } else {
-                /* Append node to level 1 */
-                /* Set second_level to the last node and append previously created ptr to it*/
-                while(second_level->next!=0) second_level = second_level->next;
-                second_level->next = ptr;
-            }
+            /* Append previously created node to last */
+            while(start->next!=0) start = start->next;
+            start->next = ptr; 
         }
         memset(buf, 0, sizeof buf);
     }
@@ -387,6 +369,5 @@ struct cgi * init_cgi_table() {
     }
 
     fclose(fp);
-
     return root;    
 }
