@@ -15,6 +15,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <time.h>
 #include "netlibs.h"
 
 struct mime {
