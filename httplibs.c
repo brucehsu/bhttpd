@@ -4,7 +4,8 @@ int handle_request(const struct mime *mime_tbl, const struct cgi *cgi_tbl, const
     char buf[BUFFER_SIZE], local_path[BUFFER_SIZE];
     char basic_request[3][BUFFER_SIZE], *content_type=0, *query=0;
     struct request req;
-    time_t t = time(0);
+    static time_t t;
+    t = time(0);
     memset(buf, 0, sizeof buf);
     memset(local_path, 0, sizeof local_path);
     memset(&req, 0, sizeof(struct request));
