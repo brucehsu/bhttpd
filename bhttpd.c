@@ -1,6 +1,7 @@
 #include "bhttpd.h"
 
 int main(int argc, char **argv) {
+    const int POLL_MAX = sysconf(_SC_OPEN_MAX);
     struct pollfd fds[POLL_MAX];
     int sockfd, clifd, polled=0, i;
     struct serv_conf conf;
