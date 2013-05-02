@@ -46,7 +46,7 @@ char * find_content_type(const struct mime *tbl, const char *ext);
 char * find_cgi_command(const struct cgi *tbl, const char *ext);
 char * determine_ext(const char *path);
 int build_cgi_env(const struct request *req);
-char * has_parameter(const char *uri);
+char * has_query_string(const char *uri);
 char * str_strip(char *str);
 struct cgi * init_cgi_table();
 #endif

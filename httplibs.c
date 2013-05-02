@@ -15,7 +15,7 @@ int handle_request(const struct mime *mime_tbl, const struct cgi *cgi_tbl, const
 
     const int type = parse_request_type(basic_request[METHOD]);
 
-    query = has_parameter(basic_request[PATH]);
+    query = has_query_string(basic_request[PATH]);
     if(query) {
         *query = 0;
         ++query;
@@ -303,7 +303,7 @@ int build_cgi_env(const struct request *req) {
     return 0;
 }
 
-char * has_parameter(const char *uri) {
+char * has_query_string(const char *uri) {
     while(*uri!=0) {
         if(*uri=='?') return (char *) uri;
         ++uri;
