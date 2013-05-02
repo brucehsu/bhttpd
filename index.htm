@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<!-- saved from url=(0038)https://github.com/fengxiaolong/bhttpd -->
+<html style="" class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths no-csspositionsticky filereader eventsource xhr2"><head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# githubog: http://ogp.me/ns/fb/githubog#"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>fengxiaolong/bhttpd · GitHub</title>
+    <link rel="search" type="application/opensearchdescription+xml" href="https://github.com/opensearch.xml" title="GitHub">
+    <link rel="fluid-icon" href="https://github.com/fluidicon.png" title="GitHub">
+    <link rel="apple-touch-icon" sizes="57x57" href="https://github.com/apple-touch-icon-114.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="https://github.com/apple-touch-icon-114.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="https://github.com/apple-touch-icon-144.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="https://github.com/apple-touch-icon-144.png">
+    <link rel="logo" type="image/svg" href="http://github-media-downloads.s3.amazonaws.com/github-logo.svg">
+    <link rel="xhr-socket" href="https://github.com/_sockets">
+
+
+    <meta name="msapplication-TileImage" content="/windows-tile.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="selected-link" value="repo_source" data-pjax-transient="">
+
+    
+    
+    <link rel="icon" type="image/x-icon" href="https://github.com/favicon.ico">
+
+    <meta content="authenticity_token" name="csrf-param">
+<meta content="bh3LxB0l8BOuzKuO/lHzghbunPhJLTDCiHI70PelUEA=" name="csrf-token">
+
+    <link href="./index_files/github-5b364eeaae0f96a33d6de9704239924ede95fbc2.css" media="all" rel="stylesheet" type="text/css">
+    <link href="./index_files/github2-749329f6bc4f0f2842535f983d87bfdf7d109c41.css" media="all" rel="stylesheet" type="text/css">
+    
+
+
+      <script type="text/javascript" async="" id="gauges-tracker" data-site-id="4f5634b5613f5d0429000010" src="./index_files/track.js"></script><script src="./index_files/frameworks-92d138f450f2960501e28397a2f63b0f100590f0.js" type="text/javascript"></script>
+      <script src="./index_files/github-bc374985e8441015fc645eca5b08988b6eadc695.js" type="text/javascript"></script><script type="text/javascript" async="" src="./index_files/ga.js"></script>
+      
+      <meta http-equiv="x-pjax-version" content="a83f1cf6e26760d57e6880aeba2ca38a">
+
+        <link data-pjax-transient="" rel="permalink" href="https://github.com/fengxiaolong/bhttpd/tree/0afd0b17b7a53877f32cbbec6a0e72a4e10071fc">
+    <meta property="og:title" content="bhttpd">
+    <meta property="og:type" content="githubog:gitrepository">
+    <meta property="og:url" content="https://github.com/fengxiaolong/bhttpd">
+    <meta property="og:image" content="https://secure.gravatar.com/avatar/137ec4ef665ff30c88514de30157c244?s=420&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png">
+    <meta property="og:site_name" content="GitHub">
+    <meta property="og:description" content="bhttpd - Simple HTTP server with CGI support">
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:site" content="@GitHub">
+    <meta property="twitter:title" content="fengxiaolong/bhttpd">
+
+    <meta name="description" content="bhttpd - Simple HTTP server with CGI support">
+
+      <meta name="robots" content="noindex, nofollow">
+  <link href="https://github.com/fengxiaolong/bhttpd/commits/master.atom" rel="alternate" title="Recent Commits to bhttpd:master" type="application/atom+xml">
+
+  <style type="text/css">#yddContainer{display:block;font-family:Microsoft YaHei;position:relative;width:100%;height:100%;top:-4px;left:-4px;font-size:12px;border:1px solid}#yddTop{display:block;height:22px}#yddTopBorderlr{display:block;position:static;height:17px;padding:2px 28px;line-height:17px;font-size:12px;color:#5079bb;font-weight:bold;border-style:none solid;border-width:1px}#yddTopBorderlr .ydd-sp{position:absolute;top:2px;height:0;overflow:hidden}.ydd-icon{left:5px;width:17px;padding:0px 0px 0px 0px;padding-top:17px;background-position:-16px -44px}.ydd-close{right:5px;width:16px;padding-top:16px;background-position:left -44px}#yddKeyTitle{float:left;text-decoration:none}#yddMiddle{display:block;margin-bottom:10px}.ydd-tabs{display:block;margin:5px 0;padding:0 5px;height:18px;border-bottom:1px solid}.ydd-tab{display:block;float:left;height:18px;margin:0 5px -1px 0;padding:0 4px;line-height:18px;border:1px solid;border-bottom:none}.ydd-trans-container{display:block;line-height:160%}.ydd-trans-container a{text-decoration:none;}#yddBottom{position:absolute;bottom:0;left:0;width:100%;height:22px;line-height:22px;overflow:hidden;background-position:left -22px}.ydd-padding010{padding:0 10px}#yddWrapper{color:#252525;z-index:10001;background:url(chrome-extension://eopjamdnofihpioajgfdikhhbobonhbb/ab20.png);}#yddContainer{background:#fff;border-color:#4b7598}#yddTopBorderlr{border-color:#f0f8fc}#yddWrapper .ydd-sp{background-image:url(chrome-extension://eopjamdnofihpioajgfdikhhbobonhbb/ydd-sprite.png)}#yddWrapper a,#yddWrapper a:hover,#yddWrapper a:visited{color:#50799b}#yddWrapper .ydd-tabs{color:#959595}.ydd-tabs,.ydd-tab{background:#fff;border-color:#d5e7f3}#yddBottom{color:#363636}#yddWrapper{min-width:250px;max-width:400px;}</style><script>window["_GOOG_TRANS_EXT_VER"] = "1";</script><script>window["_GOOG_TRANS_EXT_VER"] = "1";</script><script>window["_GOOG_TRANS_EXT_VER"] = "1";</script><script>window["_GOOG_TRANS_EXT_VER"] = "1";</script></head>
+
+
+  <body class="logged_in  linux vis-public fork env-production   disables-context-loader" style=""><div id="StayFocusd-infobar" style="display: none; top: 553px;"><img src="chrome-extension://laankejkbhbdhmipfmgcngdelahlfoji/img/eye_19x19_red.png"><span id="StayFocusd-infobar-msg"></span><span id="StayFocusd-infobar-links"><a href="https://github.com/fengxiaolong/bhttpd#" id="StayFocusd-infobar-never-show">hide forever</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="https://github.com/fengxiaolong/bhttpd#" id="StayFocusd-infobar-hide">hide once</a></span></div>
+    <div id="wrapper">
+
+      
+
+      
+      
+      
+
+      <div class="header header-logged-in true">
+  <div class="container clearfix">
+
+    <a class="header-logo-invertocat" href="https://github.com/">
+  <span class="mega-icon mega-icon-invertocat"></span>
+</a>
+
+    <div class="divider-vertical"></div>
+
+      <a href="https://github.com/notifications" class="notification-indicator tooltipped downwards" original-title="You have no unread notifications">
+    <span class="mail-status all-read"></span>
+  </a>
+  <div class="divider-vertical"></div>
+
+
+      <div class="command-bar js-command-bar  ">
+            <form accept-charset="UTF-8" action="https://github.com/search" class="command-bar-form" id="top_search_form" method="get">
+  <a href="https://github.com/search/advanced" class="advanced-search-icon tooltipped downwards command-bar-search" id="advanced_search" original-title="Advanced search"><span class="mini-icon mini-icon-advanced-search "></span></a>
+
+  <input type="text" data-hotkey="/ s" name="q" id="js-command-bar-field" placeholder="Search or type a command" tabindex="1" data-username="fengxiaolong" autocapitalize="off">
+
+  <span class="mini-icon help tooltipped downwards" original-title="Show command bar help">
+    <span class="mini-icon mini-icon-help"></span>
+  </span>
+
+  <input type="hidden" name="ref" value="cmdform">
+
+    <input type="hidden" class="js-repository-name-with-owner" value="fengxiaolong/bhttpd">
+    <input type="hidden" class="js-repository-branch" value="master">
+    <input type="hidden" class="js-repository-tree-sha" value="cb9d2eb5378629e759fa92321ea19e773e6e85aa">
+
+  <div class="divider-vertical"></div>
+</form>
+        <ul class="top-nav">
+            <li class="explore"><a href="https://github.com/explore">Explore</a></li>
+            <li><a href="https://gist.github.com/">Gist</a></li>
+            <li><a href="https://github.com/blog">Blog</a></li>
+          <li><a href="http://help.github.com/">Help</a></li>
+        </ul>
+      </div>
+
+    
+
+  
+
+    <ul id="user-links">
+      <li>
+        <a href="https://github.com/fengxiaolong" class="name">
+          <img height="20" src="./index_files/137ec4ef665ff30c88514de30157c244" width="20"> fengxiaolong
+        </a>
+      </li>
+
+        <li>
+          <a href="https://github.com/new" id="new_repo" class="tooltipped downwards" original-title="Create a new repo">
+            <span class="mini-icon mini-icon-create"></span>
+          </a>
+        </li>
+
+        <li>
+          <a href="https://github.com/settings/profile" id="account_settings" class="tooltipped downwards" original-title="Account settings ">
+            <span class="mini-icon mini-icon-account-settings"></span>
+          </a>
+        </li>
+        <li>
+          <a class="tooltipped downwards" href="https://github.com/logout" data-method="post" id="logout" original-title="Sign out">
+            <span class="mini-icon mini-icon-logout"></span>
+          </a>
+        </li>
+
+    </ul>
+
+
+<div class="js-new-dropdown-contents hidden">
+  <ul class="dropdown-menu">
+    <li>
+      <a href="https://github.com/new"><span class="mini-icon mini-icon-create"></span> New repository</a>
+    </li>
+    <li>
+        <a href="https://github.com/fengxiaolong/bhttpd/issues/new"><span class="mini-icon mini-icon-issue-opened"></span> New issue</a>
+    </li>
+    <li>
+    </li>
+    <li>
+      <a href="https://github.com/organizations/new"><span class="mini-icon mini-icon-u-list"></span> New organization</a>
+    </li>
+  </ul>
+</div>
+
+
+    
+  </div>
+</div>
+
+      
+
+      
+
+      
+
+
+            <div class="site hfeed" itemscope="" itemtype="http://schema.org/WebPage">
+      <div class="hentry">
+        
+        <div class="pagehead repohead instapaper_ignore readability-menu ">
+          <div class="container">
+            <div class="title-actions-bar">
+              
+
+<ul class="pagehead-actions">
+
+    <li class="nspr">
+      <a href="https://github.com/fengxiaolong/bhttpd/pull/new/master" class="button minibutton btn-pull-request" icon_class="mini-icon-pull-request"><span class="mini-icon mini-icon-pull-request"></span>Pull Request</a>
+    </li>
+
+    <li class="subscription">
+      <form accept-charset="UTF-8" action="https://github.com/notifications/subscribe" data-autosubmit="true" data-remote="true" method="post"><div style="margin:0;padding:0;display:inline"><input name="authenticity_token" type="hidden" value="bh3LxB0l8BOuzKuO/lHzghbunPhJLTDCiHI70PelUEA="></div>  <input id="repository_id" name="repository_id" type="hidden" value="9692842">
+
+    <div class="select-menu js-menu-container js-select-menu">
+      <span class="minibutton select-menu-button js-menu-target">
+        <span class="js-select-button">
+          <span class="mini-icon mini-icon-watching"></span>
+          Watch
+        </span>
+      </span>
+
+      <div class="select-menu-modal-holder js-menu-content">
+        <div class="select-menu-modal">
+          <div class="select-menu-header">
+            <span class="select-menu-title">Notification status</span>
+            <span class="mini-icon mini-icon-remove-close js-menu-close"></span>
+          </div> <!-- /.select-menu-header -->
+
+          <div class="select-menu-list js-navigation-container">
+
+            <div class="select-menu-item js-navigation-item selected">
+              <span class="select-menu-item-icon mini-icon mini-icon-confirm"></span>
+              <div class="select-menu-item-text">
+                <input checked="checked" id="do_included" name="do" type="radio" value="included">
+                <h4>Not watching</h4>
+                <span class="description">You only receive notifications for discussions in which you participate or are @mentioned.</span>
+                <span class="js-select-button-text hidden-select-button-text">
+                  <span class="mini-icon mini-icon-watching"></span>
+                  Watch
+                </span>
+              </div>
+            </div> <!-- /.select-menu-item -->
+
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon mini-icon mini-icon-confirm"></span>
+              <div class="select-menu-item-text">
+                <input id="do_subscribed" name="do" type="radio" value="subscribed">
+                <h4>Watching</h4>
+                <span class="description">You receive notifications for all discussions in this repository.</span>
+                <span class="js-select-button-text hidden-select-button-text">
+                  <span class="mini-icon mini-icon-unwatch"></span>
+                  Unwatch
+                </span>
+              </div>
+            </div> <!-- /.select-menu-item -->
+
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon mini-icon mini-icon-confirm"></span>
+              <div class="select-menu-item-text">
+                <input id="do_ignore" name="do" type="radio" value="ignore">
+                <h4>Ignoring</h4>
+                <span class="description">You do not receive any notifications for discussions in this repository.</span>
+                <span class="js-select-button-text hidden-select-button-text">
+                  <span class="mini-icon mini-icon-mute"></span>
+                  Stop ignoring
+                </span>
+              </div>
+            </div> <!-- /.select-menu-item -->
+
+          </div> <!-- /.select-menu-list -->
+
+        </div> <!-- /.select-menu-modal -->
+      </div> <!-- /.select-menu-modal-holder -->
+    </div> <!-- /.select-menu -->
+
+</form>
+    </li>
+
+    <li class="js-toggler-container js-social-container starring-container ">
+      <a href="https://github.com/fengxiaolong/bhttpd/unstar" class="minibutton js-toggler-target star-button starred upwards" title="Unstar this repo" data-remote="true" data-method="post" rel="nofollow">
+        <span class="mini-icon mini-icon-remove-star"></span>
+        <span class="text">Unstar</span>
+      </a>
+      <a href="https://github.com/fengxiaolong/bhttpd/star" class="minibutton js-toggler-target star-button unstarred upwards" title="Star this repo" data-remote="true" data-method="post" rel="nofollow">
+        <span class="mini-icon mini-icon-star"></span>
+        <span class="text">Star</span>
+      </a>
+      <a class="social-count js-social-count" href="https://github.com/fengxiaolong/bhttpd/stargazers">0</a>
+    </li>
+
+        <li>
+          <a href="https://github.com/fengxiaolong/bhttpd/fork" class="minibutton js-toggler-target fork-button lighter upwards" title="Fork this repo" rel="nofollow" data-method="post">
+            <span class="mini-icon mini-icon-branch-create"></span>
+            <span class="text">Fork</span>
+          </a>
+          <a href="https://github.com/fengxiaolong/bhttpd/network" class="social-count">2</a>
+        </li>
+
+
+</ul>
+
+              <h1 itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb" class="entry-title public">
+                <span class="repo-label"><span>public</span></span>
+                <span class="mega-icon mega-icon-repo-forked"></span>
+                <span class="author vcard">
+                  <a href="https://github.com/fengxiaolong" class="url fn" itemprop="url" rel="author">
+                  <span itemprop="title">fengxiaolong</span>
+                  </a></span> /
+                <strong><a href="./index_files/index.htm" class="js-current-repository">bhttpd</a></strong>
+                  <span class="fork-flag">
+                    <span class="text">forked from <a href="https://github.com/brucehsu/bhttpd">brucehsu/bhttpd</a></span>
+                  </span>
+              </h1>
+            </div>
+
+            
+  <ul class="tabs with-details-box">
+    <li class="pulse-nav"><a href="https://github.com/fengxiaolong/bhttpd/pulse" class="js-selected-navigation-item " data-selected-links="pulse /fengxiaolong/bhttpd/pulse" rel="nofollow"><span class="mini-icon mini-icon-pulse"></span></a></li>
+    <li><a href="./index_files/index.htm" class="js-selected-navigation-item selected" data-selected-links="repo_source repo_downloads repo_commits repo_tags repo_branches /fengxiaolong/bhttpd">Code</a></li>
+    <li><a href="https://github.com/fengxiaolong/bhttpd/network" class="js-selected-navigation-item " data-selected-links="repo_network /fengxiaolong/bhttpd/network">Network</a></li>
+    <li><a href="https://github.com/fengxiaolong/bhttpd/pulls" class="js-selected-navigation-item " data-selected-links="repo_pulls /fengxiaolong/bhttpd/pulls">Pull Requests <span class="counter">0</span></a></li>
+
+
+      <li><a href="https://github.com/fengxiaolong/bhttpd/wiki" class="js-selected-navigation-item " data-selected-links="repo_wiki /fengxiaolong/bhttpd/wiki">Wiki</a></li>
+
+
+    <li><a href="https://github.com/fengxiaolong/bhttpd/graphs" class="js-selected-navigation-item " data-selected-links="repo_graphs repo_contributors /fengxiaolong/bhttpd/graphs">Graphs</a></li>
+
+      <li>
+        <a href="https://github.com/fengxiaolong/bhttpd/settings">Settings</a>
+      </li>
+
+  </ul>
+  
+  <div id="repo_details" class="metabox clearfix
+        not-editable" style="display: block;">
+      <div id="repo_details_loader" class="context-loader" style="display:none">Sending Request…</div>
+
+        <div class="repo-desc-homepage">
+          
+    <div class="repository-lang-stats">
+      <div class="repository-lang-stats-graph">
+      <span class="language-color" style="width:100%; background-color:#555;" itemprop="keywords">C</span>
+      </div>
+      <ol class="list-tip">
+        <li>
+            <a href="https://github.com/languages/C">
+              <span class="color-block language-color" style="background-color:#555;"></span>
+              <span class="lang">C</span>
+              <span class="percent">100%</span>
+            </a>
+        </li>
+      </ol>
+    </div>
+
+<div id="repository_description" class="repository-description">
+    <p>Simple HTTP server with CGI support
+      <span id="read_more" style="display: inline;">— <a href="https://github.com/fengxiaolong/bhttpd#readme">Read more</a></span>
+    </p>
+</div>
+
+
+<div class="repository-homepage" id="repository_homepage">
+  <p></p>
+</div>
+
+  <button type="button" class="minibutton edit-button js-edit-details">Edit</button>
+  <!-- <a href="#" class="minibutton edit-button js-edit-details">Edit</a> -->
+
+        </div>
+
+      <div class="edit-repo-desc-homepage" style="display:none">
+        <form accept-charset="UTF-8" action="https://github.com/fengxiaolong/bhttpd/settings/update_meta" id="js-update-repo-meta-form" method="post"><div style="margin:0;padding:0;display:inline"><input name="_method" type="hidden" value="put"><input name="authenticity_token" type="hidden" value="bh3LxB0l8BOuzKuO/lHzghbunPhJLTDCiHI70PelUEA="></div>
+          <p class="error" style="display:none">Sorry, but there was a problem saving your changes.</p>
+          <input type="text" id="repository-description-field" class="description-field" name="repo_description" value="Simple HTTP server with CGI support" placeholder="Add a description to this repository">
+          <input type="text" id="repository-homepage-field" class="homepage-field" name="repo_homepage" value="" placeholder="Add a website to this repository">
+
+          <div class="edit-repo-actions">
+            <button type="submit" class="button save-button">Save changes</button>
+            <span class="cancel">
+              <a href="https://github.com/fengxiaolong/bhttpd#" class="button danger">Cancel</a>
+            </span>
+          </div>
+</form>      </div>
+
+      
+<div class="url-box js-url-box">
+  <ul class="native-clones">
+      <li><a href="https://github.com/fengxiaolong/bhttpd/archive/master.zip" class="button minibutton " icon_class="mini-icon-download" rel="nofollow" title="Download this repository as a zip file"><span class="mini-icon mini-icon-download"></span>ZIP</a>
+  </li></ul>
+
+  <div class="clone-urls js-clone-urls ">
+    <span class="http_clone_url clone-url-button js-clone-url-button selected"><a href="https://github.com/fengxiaolong/bhttpd.git" class="js-git-protocol-selector" data-permission="Read+Write" data-url="/users/set_protocol?protocol_selector=http&amp;protocol_type=push">HTTP</a></span>
+<span class="private_clone_url clone-url-button js-clone-url-button"><a href="https://github.com/fengxiaolong/git@github.com:fengxiaolong/bhttpd.git" class="js-git-protocol-selector" data-permission="Read+Write" data-url="/users/set_protocol?protocol_selector=ssh&amp;protocol_type=push">SSH</a></span>
+<span class="public_clone_url clone-url-button js-clone-url-button"><a href="git://github.com/fengxiaolong/bhttpd.git" class="js-git-protocol-selector" data-permission="Read-Only">Git Read-Only</a></span>
+    <span class="clone-url">
+      <input type="text" readonly="" spellcheck="false" class="url-field js-url-field" value="https://github.com/fengxiaolong/bhttpd.git">
+    </span>
+    <span class="clone-url-button">
+      <span class="js-zeroclipboard url-box-clippy zeroclipboard-button" data-clipboard-text="https://github.com/fengxiaolong/bhttpd.git" data-copied-hint="copied!" title="copy to clipboard"><span class="mini-icon mini-icon-clipboard"></span></span>
+    </span>
+  </div>
+  <p class="url-description"><span class="bold js-clone-url-permission">Read+Write</span> access</p>
+</div>
+
+        </div>
+
+<div class="tabnav">
+
+  <span class="tabnav-right">
+    <ul class="tabnav-tabs">
+          <li><a href="https://github.com/fengxiaolong/bhttpd/tags" class="js-selected-navigation-item tabnav-tab" data-selected-links="repo_tags /fengxiaolong/bhttpd/tags">Tags <span class="counter blank">0</span></a></li>
+    </ul>
+    
+  </span>
+
+  <div class="tabnav-widget scope">
+
+
+    <div class="select-menu js-menu-container js-select-menu js-branch-menu">
+      <a class="minibutton select-menu-button js-menu-target" data-hotkey="w" data-ref="master">
+        <span class="mini-icon mini-icon-branch"></span>
+        <i>branch:</i>
+        <span class="js-select-button">master</span>
+      </a>
+
+      <div class="select-menu-modal-holder js-menu-content js-navigation-container">
+
+        <div class="select-menu-modal">
+          <div class="select-menu-header">
+            <span class="select-menu-title">Switch branches/tags</span>
+            <span class="mini-icon mini-icon-remove-close js-menu-close"></span>
+          </div> <!-- /.select-menu-header -->
+
+          <div class="select-menu-filters">
+            <div class="select-menu-text-filter">
+              <input type="text" id="commitish-filter-field" class="js-filterable-field js-navigation-enable" placeholder="Find or create a branch…">
+            </div>
+            <div class="select-menu-tabs">
+              <ul>
+                <li class="select-menu-tab">
+                  <a href="https://github.com/fengxiaolong/bhttpd#" data-tab-filter="branches" class="js-select-menu-tab">Branches</a>
+                </li>
+                <li class="select-menu-tab">
+                  <a href="https://github.com/fengxiaolong/bhttpd#" data-tab-filter="tags" class="js-select-menu-tab">Tags</a>
+                </li>
+              </ul>
+            </div><!-- /.select-menu-tabs -->
+          </div><!-- /.select-menu-filters -->
+
+          <div class="select-menu-list select-menu-tab-bucket js-select-menu-tab-bucket css-truncate" data-tab-filter="branches">
+
+            <div data-filterable-for="commitish-filter-field" data-filterable-type="substring">
+
+                <div class="select-menu-item js-navigation-item ">
+                  <span class="select-menu-item-icon mini-icon mini-icon-confirm"></span>
+                  <a href="https://github.com/fengxiaolong/bhttpd/tree/io_multiplexing" class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target" data-name="io_multiplexing" rel="nofollow" title="io_multiplexing">io_multiplexing</a>
+                </div> <!-- /.select-menu-item -->
+                <div class="select-menu-item js-navigation-item selected">
+                  <span class="select-menu-item-icon mini-icon mini-icon-confirm"></span>
+                  <a href="https://github.com/fengxiaolong/bhttpd/tree/master" class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target" data-name="master" rel="nofollow" title="master">master</a>
+                </div> <!-- /.select-menu-item -->
+            </div>
+
+              <form accept-charset="UTF-8" action="https://github.com/fengxiaolong/bhttpd/branches" class="js-create-branch select-menu-item select-menu-new-item-form js-navigation-item js-new-item-form" method="post"><div style="margin:0;padding:0;display:inline"><input name="authenticity_token" type="hidden" value="bh3LxB0l8BOuzKuO/lHzghbunPhJLTDCiHI70PelUEA="></div>
+
+                <span class="mini-icon mini-icon-branch-create select-menu-item-icon"></span>
+                <div class="select-menu-item-text">
+                  <h4>Create branch: <span class="js-new-item-name"></span></h4>
+                  <span class="description">from ‘master’</span>
+                </div>
+                <input type="hidden" name="name" id="name" class="js-new-item-value">
+                <input type="hidden" name="branch" id="branch" value="master">
+                <input type="hidden" name="path" id="branch" value="">
+              </form> <!-- /.select-menu-item -->
+
+          </div> <!-- /.select-menu-list -->
+
+
+          <div class="select-menu-list select-menu-tab-bucket js-select-menu-tab-bucket css-truncate" data-tab-filter="tags">
+            <div data-filterable-for="commitish-filter-field" data-filterable-type="substring">
+
+            </div>
+
+            <div class="select-menu-no-results">Nothing to show</div>
+
+          </div> <!-- /.select-menu-list -->
+
+        </div> <!-- /.select-menu-modal -->
+      </div> <!-- /.select-menu-modal-holder -->
+    </div> <!-- /.select-menu -->
+
+  </div> <!-- /.scope -->
+
+  <ul class="tabnav-tabs">
+    <li><a href="./index_files/index.htm" class="selected js-selected-navigation-item tabnav-tab" data-selected-links="repo_source /fengxiaolong/bhttpd">Files</a></li>
+    <li><a href="https://github.com/fengxiaolong/bhttpd/commits/master" class="js-selected-navigation-item tabnav-tab" data-selected-links="repo_commits /fengxiaolong/bhttpd/commits/master">Commits</a></li>
+    <li><a href="https://github.com/fengxiaolong/bhttpd/branches" class="js-selected-navigation-item tabnav-tab" data-selected-links="repo_branches /fengxiaolong/bhttpd/branches" rel="nofollow">Branches <span class="counter ">2</span></a></li>
+  </ul>
+
+</div>
+
+  
+  
+  
+
+
+            
+          </div>
+        </div><!-- /.repohead -->
+
+        <div id="js-repo-pjax-container" class="container context-loader-container" data-pjax-container="">
+          
+
+
+<!-- tree commit key: views10/v8/tree:v21:f44dde377f40f45c3bc0875774f438b1 -->
+
+  <div id="slider">
+      <div class="frame-meta">
+          
+  <div>
+  </div>
+
+
+          <p class="history-link js-history-link-replace">
+              <a href="https://github.com/fengxiaolong/bhttpd/commits/master">
+                <span class="mini-icon mini-icon-history tooltipped" original-title="Browse commits for this branch"></span>
+                37 commits
+</a>          </p>
+
+        <div class="breadcrumb">
+          <span class="bold"><span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a href="./index_files/index.htm" class="js-slide-to" data-branch="master" data-direction="back" itemscope="url"><span itemprop="title">bhttpd</span></a></span></span><span class="separator"> / </span><form action="https://github.com/fengxiaolong/bhttpd/new/master" class="js-new-blob-form tooltipped rightwards new-file-link" method="post" original-title="Create a new file here"><span class="js-new-blob-submit mini-icon mini-icon-new-file"></span></form>
+        </div>
+
+        <a href="https://github.com/fengxiaolong/bhttpd/find/master" class="js-slide-to" data-hotkey="t" style="display:none">Show File Finder</a>
+
+      </div><!-- ./.frame-meta -->
+
+      
+
+  <div class="frames" style="min-height: 774px;">
+    <div class="frame" data-permalink-url="/fengxiaolong/bhttpd/tree/0afd0b17b7a53877f32cbbec6a0e72a4e10071fc" data-title="fengxiaolong/bhttpd · GitHub" data-type="tree" style="margin-left: 0px;">
+
+      <div class="bubble tree-browser-wrapper">
+
+      <div class="commit commit-tease js-details-container">
+    <p class="commit-title ">
+        <a href="https://github.com/fengxiaolong/bhttpd/commit/0afd0b17b7a53877f32cbbec6a0e72a4e10071fc" class="message">[README] Updated to last commit</a>
+        
+    </p>
+    <div class="commit-meta">
+      <span class="js-zeroclipboard zeroclipboard-link" data-clipboard-text="0afd0b17b7a53877f32cbbec6a0e72a4e10071fc" data-copied-hint="copied!" title="Copy SHA"><span class="mini-icon mini-icon-clipboard"></span></span>
+      <a href="https://github.com/fengxiaolong/bhttpd/commit/0afd0b17b7a53877f32cbbec6a0e72a4e10071fc" class="sha-block" data-pjax="">latest commit <span class="sha">0afd0b17b7</span></a>
+
+      <div class="authorship">
+        <img class="gravatar" height="20" src="./index_files/5b269f10020d91a6e2fb0930693ec941" width="20">
+        <span class="author-name"><a href="https://github.com/brucehsu" data-skip-pjax="true" rel="contributor">brucehsu</a></span>
+        authored <time class="js-relative-date updated" datetime="2013-04-30T20:26:13-07:00" title="2013-04-30 20:26:13">a day ago</time>
+
+      </div>
+    </div>
+  </div><table class="tree-browser css-truncate" cellpadding="0" cellspacing="0">
+        <thead>
+            
+  
+
+        </thead>
+
+        
+
+
+
+
+
+<tbody class="tree-entries js-deferred-content" data-url="/fengxiaolong/bhttpd/tree-commits/master">
+
+
+    <tr>
+      <td class="icon"><span class="mini-icon mini-icon-text-file"></span></td>
+      <td class="content"><a href="https://github.com/fengxiaolong/bhttpd/blob/master/LICENSE" class="js-directory-link js-slide-to css-truncate-target" id="9879d6db96fd29134fc802214163b95a-d159169d1050894d3ea3b98e1c965c4058208fe1" title="LICENSE">LICENSE</a></td>
+      <td class="age"><time class="js-relative-date" datetime="2013-04-09T00:47:44-07:00" title="2013-04-09 00:47:44">23 days ago</time></td>
+
+      <td class="message">
+          <a href="https://github.com/fengxiaolong/bhttpd/commit/80ad278016e958ce8c0b31e787d63a1ff3b8bf21" class="message">Use GPLv2 as license</a>
+          [<a href="https://github.com/brucehsu" rel="author">brucehsu</a>]
+
+      </td>
+    </tr>
+    <tr>
+      <td class="icon"><span class="mini-icon mini-icon-text-file"></span></td>
+      <td class="content"><a href="https://github.com/fengxiaolong/bhttpd/blob/master/Makefile" class="js-directory-link js-slide-to css-truncate-target" id="b67911656ef5d18c4ae36cb6741b7965-346f7b8ecf173f396d4d63c2597844084d5a3b96" title="Makefile">Makefile</a></td>
+      <td class="age"><time class="js-relative-date" datetime="2013-04-04T06:31:35-07:00" title="2013-04-04 06:31:35">a month ago</time></td>
+
+      <td class="message">
+          <a href="https://github.com/fengxiaolong/bhttpd/commit/009be8b675cfd107ad556d47771cf69e881e0aca" class="message">[HTTP] GET implemented</a>
+          [<a href="https://github.com/brucehsu" rel="author">brucehsu</a>]
+
+      </td>
+    </tr>
+    <tr>
+      <td class="icon"><span class="mini-icon mini-icon-text-file"></span></td>
+      <td class="content"><a href="https://github.com/fengxiaolong/bhttpd/blob/master/README.md" class="js-directory-link js-slide-to css-truncate-target" id="04c6e90faac2675aa89e2176d2eec7d8-a9f2785443fc847c20a9fe2a52803b52f3d12efe" title="README.md">README.md</a></td>
+      <td class="age"><time class="js-relative-date" datetime="2013-04-30T20:26:13-07:00" title="2013-04-30 20:26:13">a day ago</time></td>
+
+      <td class="message">
+          <a href="https://github.com/fengxiaolong/bhttpd/commit/0afd0b17b7a53877f32cbbec6a0e72a4e10071fc" class="message">[README] Updated to last commit</a>
+          [<a href="https://github.com/brucehsu" rel="author">brucehsu</a>]
+
+      </td>
+    </tr>
+    <tr>
+      <td class="icon"><span class="mini-icon mini-icon-text-file"></span></td>
+      <td class="content"><a href="https://github.com/fengxiaolong/bhttpd/blob/master/bhttpd.c" class="js-directory-link js-slide-to css-truncate-target" id="ca24e2cc62dff35449e2d61fe10f1fde-320fb9501db08d873630c78498e7daa4f2f22a46" title="bhttpd.c">bhttpd.c</a></td>
+      <td class="age"><time class="js-relative-date" datetime="2013-04-30T20:25:36-07:00" title="2013-04-30 20:25:36">a day ago</time></td>
+
+      <td class="message">
+          <a href="https://github.com/fengxiaolong/bhttpd/commit/79376c17b9f4dd52e928fab1b74130db772e0d18" class="message">Use system configured value of maximum file descriptor for poll() ins…</a>
+          [<a href="https://github.com/brucehsu" rel="author">brucehsu</a>]
+
+      </td>
+    </tr>
+    <tr>
+      <td class="icon"><span class="mini-icon mini-icon-text-file"></span></td>
+      <td class="content"><a href="https://github.com/fengxiaolong/bhttpd/blob/master/bhttpd.h" class="js-directory-link js-slide-to css-truncate-target" id="18eb546278f0238d8f072873b8f3c984-498db78334149a62a5687083b2916f1a9e275ad0" title="bhttpd.h">bhttpd.h</a></td>
+      <td class="age"><time class="js-relative-date" datetime="2013-04-29T23:28:11-07:00" title="2013-04-29 23:28:11">2 days ago</time></td>
+
+      <td class="message">
+          <a href="https://github.com/fengxiaolong/bhttpd/commit/2d6e14794039272b1146778c57bd414fc0fa1936" class="message">[CONF] Add default page parameter</a>
+          [<a href="https://github.com/brucehsu" rel="author">brucehsu</a>]
+
+      </td>
+    </tr>
+    <tr>
+      <td class="icon"><span class="mini-icon mini-icon-text-file"></span></td>
+      <td class="content"><a href="https://github.com/fengxiaolong/bhttpd/blob/master/cgi.conf" class="js-directory-link js-slide-to css-truncate-target" id="bcb9211c869f6e9315cf5afbb063fe2b-f95dbb6633470157d25800137c8e412481137572" title="cgi.conf">cgi.conf</a></td>
+      <td class="age"><time class="js-relative-date" datetime="2013-04-09T05:16:10-07:00" title="2013-04-09 05:16:10">23 days ago</time></td>
+
+      <td class="message">
+          <a href="https://github.com/fengxiaolong/bhttpd/commit/995fb2eb6e043e4759248d516473ec0534dba79f" class="message">[CGI] Configurable CGI handlers</a>
+          [<a href="https://github.com/brucehsu" rel="author">brucehsu</a>]
+
+      </td>
+    </tr>
+    <tr>
+      <td class="icon"><span class="mini-icon mini-icon-text-file"></span></td>
+      <td class="content"><a href="https://github.com/fengxiaolong/bhttpd/blob/master/const.h" class="js-directory-link js-slide-to css-truncate-target" id="f3dbff9b083987c091e52060c7059bf2-6e7f70a6155cf12a175c5554c890478857af0f5e" title="const.h">const.h</a></td>
+      <td class="age"><time class="js-relative-date" datetime="2013-04-30T20:25:36-07:00" title="2013-04-30 20:25:36">a day ago</time></td>
+
+      <td class="message">
+          <a href="https://github.com/fengxiaolong/bhttpd/commit/79376c17b9f4dd52e928fab1b74130db772e0d18" class="message">Use system configured value of maximum file descriptor for poll() ins…</a>
+          [<a href="https://github.com/brucehsu" rel="author">brucehsu</a>]
+
+      </td>
+    </tr>
+    <tr>
+      <td class="icon"><span class="mini-icon mini-icon-text-file"></span></td>
+      <td class="content"><a href="https://github.com/fengxiaolong/bhttpd/blob/master/httplibs.c" class="js-directory-link js-slide-to css-truncate-target" id="d89efdcfe339704c5e3a2f40994533ad-0586d4ab626466b06c1b5d804cea0e301612660d" title="httplibs.c">httplibs.c</a></td>
+      <td class="age"><time class="js-relative-date" datetime="2013-04-30T20:05:33-07:00" title="2013-04-30 20:05:33">a day ago</time></td>
+
+      <td class="message">
+          <a href="https://github.com/fengxiaolong/bhttpd/commit/a816a919ef98e3cba8ae0c9f44fc62eb1eed4089" class="message">[LOG] Reduce time retrieving overhead</a>
+          [<a href="https://github.com/brucehsu" rel="author">brucehsu</a>]
+
+      </td>
+    </tr>
+    <tr>
+      <td class="icon"><span class="mini-icon mini-icon-text-file"></span></td>
+      <td class="content"><a href="https://github.com/fengxiaolong/bhttpd/blob/master/httplibs.h" class="js-directory-link js-slide-to css-truncate-target" id="0efb2f9be350fc091d85739d20c51edb-379df4e3e85b821b27e7c742557253b941c9a5e0" title="httplibs.h">httplibs.h</a></td>
+      <td class="age"><time class="js-relative-date" datetime="2013-04-30T00:30:42-07:00" title="2013-04-30 00:30:42">2 days ago</time></td>
+
+      <td class="message">
+          <a href="https://github.com/fengxiaolong/bhttpd/commit/bbdb7ef102643667b47e2b0b4eff5990c253e5b2" class="message">[LOG] Record initiated time of request</a>
+          [<a href="https://github.com/brucehsu" rel="author">brucehsu</a>]
+
+      </td>
+    </tr>
+    <tr>
+      <td class="icon"><span class="mini-icon mini-icon-text-file"></span></td>
+      <td class="content"><a href="https://github.com/fengxiaolong/bhttpd/blob/master/mime.types" class="js-directory-link js-slide-to css-truncate-target" id="59609c22bcbc191a0552672d83764503-c7ce073dae4e54cb556e7516aeb13a9e60b53835" title="mime.types">mime.types</a></td>
+      <td class="age"><time class="js-relative-date" datetime="2013-04-04T06:31:35-07:00" title="2013-04-04 06:31:35">a month ago</time></td>
+
+      <td class="message">
+          <a href="https://github.com/fengxiaolong/bhttpd/commit/009be8b675cfd107ad556d47771cf69e881e0aca" class="message">[HTTP] GET implemented</a>
+          [<a href="https://github.com/brucehsu" rel="author">brucehsu</a>]
+
+      </td>
+    </tr>
+    <tr>
+      <td class="icon"><span class="mini-icon mini-icon-text-file"></span></td>
+      <td class="content"><a href="https://github.com/fengxiaolong/bhttpd/blob/master/netlibs.c" class="js-directory-link js-slide-to css-truncate-target" id="02d8cb72668cbd50585eaf1b87dfdfa7-2c90248ffb20af603cda5caaca79b1ccaacb7757" title="netlibs.c">netlibs.c</a></td>
+      <td class="age"><time class="js-relative-date" datetime="2013-04-26T02:00:49-07:00" title="2013-04-26 02:00:49">6 days ago</time></td>
+
+      <td class="message">
+          <a href="https://github.com/fengxiaolong/bhttpd/commit/31ef5453a4826af857f4bfbad4908edf212f0773" class="message">Close file properly after sending them</a>
+          [<a href="https://github.com/brucehsu" rel="author">brucehsu</a>]
+
+      </td>
+    </tr>
+    <tr>
+      <td class="icon"><span class="mini-icon mini-icon-text-file"></span></td>
+      <td class="content"><a href="https://github.com/fengxiaolong/bhttpd/blob/master/netlibs.h" class="js-directory-link js-slide-to css-truncate-target" id="b381106b33a9a946029678d86d6c2fa1-e796b64ac5b72d6a9b5f79b4f4e940200c3f6e41" title="netlibs.h">netlibs.h</a></td>
+      <td class="age"><time class="js-relative-date" datetime="2013-04-05T09:58:25-07:00" title="2013-04-05 09:58:25">a month ago</time></td>
+
+      <td class="message">
+          <a href="https://github.com/fengxiaolong/bhttpd/commit/67a833d81bfbc60e2537c23af208f3b7bb966532" class="message">[CGI] Allow parameter passing to PHP script</a>
+          [<a href="https://github.com/brucehsu" rel="author">brucehsu</a>]
+
+      </td>
+    </tr>
+    <tr>
+      <td class="icon"><span class="mini-icon mini-icon-text-file"></span></td>
+      <td class="content"><a href="https://github.com/fengxiaolong/bhttpd/blob/master/serv.conf" class="js-directory-link js-slide-to css-truncate-target" id="c0adc8c6c7c66fdd370afbe9bba6e816-a9fac69b37e9a1f33305bb07fda774fc40b2c99a" title="serv.conf">serv.conf</a></td>
+      <td class="age"><time class="js-relative-date" datetime="2013-04-29T23:28:11-07:00" title="2013-04-29 23:28:11">2 days ago</time></td>
+
+      <td class="message">
+          <a href="https://github.com/fengxiaolong/bhttpd/commit/2d6e14794039272b1146778c57bd414fc0fa1936" class="message">[CONF] Add default page parameter</a>
+          [<a href="https://github.com/brucehsu" rel="author">brucehsu</a>]
+
+      </td>
+    </tr>
+</tbody>
+
+
+
+      </table>
+      </div>
+
+        <div id="readme" class="clearfix announce instapaper_body md">
+          <span class="name"><span class="mini-icon mini-icon-readme"></span> README.md</span><article class="markdown-body entry-content" itemprop="mainContentOfPage"><h1>
+<a name="bhttpd" class="anchor" href="https://github.com/fengxiaolong/bhttpd#bhttpd"><span class="mini-icon mini-icon-link"></span></a>bhttpd</h1>
+
+<h2>
+<a name="introduction" class="anchor" href="https://github.com/fengxiaolong/bhttpd#introduction"><span class="mini-icon mini-icon-link"></span></a>Introduction</h2>
+
+<p>bhttpd is a simple HTTP server implementation which provides static page serving and dynamic web application handling via CGI. It also features flexible configuration allowing user to set CGI handler and basic settings of the server.</p>
+
+<h2>
+<a name="usage" class="anchor" href="https://github.com/fengxiaolong/bhttpd#usage"><span class="mini-icon mini-icon-link"></span></a>Usage</h2>
+
+<p>You should modify serv.conf first to fit your needs, then compile the program by <code>make</code>. After complication success, you can simply use <code>./bhttpd</code> to start the server.</p></article>
+        </div>
+    </div>
+  </div>
+  <br style="clear:both;">
+
+
+<br style="clear:both;">
+
+<div id="js-frame-loading-template" class="frame frame-loading large-loading-area" style="display:none;">
+  <img class="js-frame-loading-spinner" src="./index_files/octocat-spinner-128.gif" height="64" width="64">
+</div>
+
+
+  </div>
+
+        </div>
+      </div>
+      <div class="context-overlay"></div>
+    </div>
+
+      <div id="footer-push"></div><!-- hack for sticky footer -->
+    </div><!-- end of wrapper - hack for sticky footer -->
+
+      <!-- footer -->
+      <div id="footer">
+  <div class="container clearfix">
+
+      <dl class="footer_nav">
+        <dt>GitHub</dt>
+        <dd><a href="https://github.com/about">About us</a></dd>
+        <dd><a href="https://github.com/blog">Blog</a></dd>
+        <dd><a href="https://github.com/contact">Contact &amp; support</a></dd>
+        <dd><a href="http://enterprise.github.com/">GitHub Enterprise</a></dd>
+        <dd><a href="http://status.github.com/">Site status</a></dd>
+      </dl>
+
+      <dl class="footer_nav">
+        <dt>Applications</dt>
+        <dd><a href="http://mac.github.com/">GitHub for Mac</a></dd>
+        <dd><a href="http://windows.github.com/">GitHub for Windows</a></dd>
+        <dd><a href="http://eclipse.github.com/">GitHub for Eclipse</a></dd>
+        <dd><a href="http://mobile.github.com/">GitHub mobile apps</a></dd>
+      </dl>
+
+      <dl class="footer_nav">
+        <dt>Services</dt>
+        <dd><a href="http://get.gaug.es/">Gauges: Web analytics</a></dd>
+        <dd><a href="http://speakerdeck.com/">Speaker Deck: Presentations</a></dd>
+        <dd><a href="https://gist.github.com/">Gist: Code snippets</a></dd>
+        <dd><a href="http://jobs.github.com/">Job board</a></dd>
+      </dl>
+
+      <dl class="footer_nav">
+        <dt>Documentation</dt>
+        <dd><a href="http://help.github.com/">GitHub Help</a></dd>
+        <dd><a href="http://developer.github.com/">Developer API</a></dd>
+        <dd><a href="http://github.github.com/github-flavored-markdown/">GitHub Flavored Markdown</a></dd>
+        <dd><a href="http://pages.github.com/">GitHub Pages</a></dd>
+      </dl>
+
+      <dl class="footer_nav">
+        <dt>More</dt>
+        <dd><a href="http://training.github.com/">Training</a></dd>
+        <dd><a href="https://github.com/edu">Students &amp; teachers</a></dd>
+        <dd><a href="http://shop.github.com/">The Shop</a></dd>
+        <dd><a href="https://github.com/plans">Plans &amp; pricing</a></dd>
+        <dd><a href="http://octodex.github.com/">The Octodex</a></dd>
+      </dl>
+
+      <hr class="footer-divider">
+
+
+    <p class="right">© 2013 <span title="0.07615s from fe19.rs.github.com">GitHub</span>, Inc. All rights reserved.</p>
+    <a class="left" href="https://github.com/">
+      <span class="mega-icon mega-icon-invertocat"></span>
+    </a>
+    <ul id="legal">
+        <li><a href="https://github.com/site/terms">Terms of Service</a></li>
+        <li><a href="https://github.com/site/privacy">Privacy</a></li>
+        <li><a href="https://github.com/security">Security</a></li>
+    </ul>
+
+  </div><!-- /.container -->
+
+</div><!-- /.#footer -->
+
+
+    <div class="fullscreen-overlay js-fullscreen-overlay" id="fullscreen_overlay">
+  <div class="fullscreen-container js-fullscreen-container">
+    <div class="textarea-wrap">
+      <textarea name="fullscreen-contents" id="fullscreen-contents" class="js-fullscreen-contents" placeholder="" data-suggester="fullscreen_suggester"></textarea>
+          <div class="suggester-container">
+              <div class="suggester fullscreen-suggester js-navigation-container" id="fullscreen_suggester" data-url="/fengxiaolong/bhttpd/suggestions/commit">
+              </div>
+          </div>
+    </div>
+  </div>
+  <div class="fullscreen-sidebar">
+    <a href="https://github.com/fengxiaolong/bhttpd#" class="exit-fullscreen js-exit-fullscreen tooltipped leftwards" original-title="Exit Zen Mode">
+      <span class="mega-icon mega-icon-normalscreen"></span>
+    </a>
+    <a href="https://github.com/fengxiaolong/bhttpd#" class="theme-switcher js-theme-switcher tooltipped leftwards" original-title="Switch themes">
+      <span class="mini-icon mini-icon-brightness"></span>
+    </a>
+  </div>
+</div>
+
+
+
+    <div id="ajax-error-message" class="flash flash-error">
+      <span class="mini-icon mini-icon-exclamation"></span>
+      Something went wrong with that request. Please try again.
+      <a href="https://github.com/fengxiaolong/bhttpd#" class="mini-icon mini-icon-remove-close ajax-error-dismiss"></a>
+    </div>
+
+    
+    
+    <span id="server_response_time" data-time="0.07661" data-host="fe19"></span>
+    
+  
+
+
+<div id="global-zeroclipboard-html-bridge" class="global-zeroclipboard-container" data-clipboard-ready="true" style="position: absolute; left: -9999px; top: -9999px; width: 15px; height: 15px; z-index: 9999;" original-title="">      <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" id="global-zeroclipboard-flash-bridge" width="100%" height="100%">         <param name="movie" value="https://a248.e.akamai.net/assets.github.com/flash/ZeroClipboard.swf?nocache=1367477044814">         <param name="allowScriptAccess" value="always">         <param name="scale" value="exactfit">         <param name="loop" value="false">         <param name="menu" value="false">         <param name="quality" value="best">         <param name="bgcolor" value="#ffffff">         <param name="wmode" value="transparent">         <param name="flashvars" value="trustedDomain=github.com">         <embed src="https://a248.e.akamai.net/assets.github.com/flash/ZeroClipboard.swf?nocache=1367477044814" loop="false" menu="false" quality="best" bgcolor="#ffffff" width="100%" height="100%" name="global-zeroclipboard-flash-bridge" allowscriptaccess="always" allowfullscreen="false" type="application/x-shockwave-flash" wmode="transparent" pluginspage="http://www.macromedia.com/go/getflashplayer" flashvars="trustedDomain=github.com" scale="exactfit">                </object></div>    <div id="facebox" style="display:none;">       <div class="popup">         <div class="content">         </div>         <a href="https://github.com/fengxiaolong/bhttpd#" class="close"><span class="mini-icon mini-icon-remove-close"></span></a>       </div>     </div></body></html>
