@@ -1,6 +1,8 @@
 #include "httplibs.h"
 
-int handle_request(const struct mime *mime_tbl, const struct cgi *cgi_tbl, const char *path_prefix, const char *default_page, const int sockfd) {
+int handle_request(const struct mime *mime_tbl, const struct cgi *cgi_tbl,
+    const char *path_prefix, const char *default_page,const int sockfd)
+{
     char buf[BUFFER_SIZE], local_path[BUFFER_SIZE];
     char basic_request[3][BUFFER_SIZE], *content_type=0, *query=0;
     struct request req;
@@ -10,7 +12,7 @@ int handle_request(const struct mime *mime_tbl, const struct cgi *cgi_tbl, const
     memset(local_path, 0, sizeof local_path);
     memset(&req, 0, sizeof(struct request));
 
-    read_line(buf, sockfd);
+    read_line(buf, BUFFER_SIZE, sockfd);
     sscanf(buf, "%s %s %s", basic_request[METHOD], basic_request[PATH], basic_request[PROC]);
 
     const int type = parse_request_type(basic_request[METHOD]);
@@ -120,7 +122,7 @@ int handle_cgi(const struct request *req, const struct cgi *cgi, const int sockf
         write_socket(RES_200, strlen(RES_200), sockfd);
         memset(buf, 0, sizeof buf);
 
-        while(read_line(buf, sockfd)) {
+        while(read_line(buf,BUFFER_SIZE,sockfd)) {
             if(buf[0]=='\r') break;
             char *ptr = buf;
             while(*ptr!=':') ++ptr;

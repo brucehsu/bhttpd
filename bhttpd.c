@@ -73,7 +73,7 @@ int init_conf(struct serv_conf* conf) {
         return -1;
     }
 
-    while(fgets(buf, BUFFER_SIZE, fp)!=0) {
+    while(fgets(buf, BUFFER_SIZE, fp) != NULL) {
         char *ptr = buf;
         char *to_ptr = param_name;
         while(*ptr!=' ') *to_ptr++ = *ptr++;
@@ -82,18 +82,21 @@ int init_conf(struct serv_conf* conf) {
         while(*ptr!=0 && *ptr!='\n') *to_ptr++ = *ptr++;
         val_len = strlen(param_val) + 1;
 
-        if(strcmp("PORT", param_name)==0) {
+        if(strcmp("PORT", param_name) == 0) {
             conf->port = (char*) malloc(sizeof(char)*val_len);
             memset(conf->port, 0, sizeof(char)*val_len);
             strncpy(conf->port, param_val, val_len);
+            conf->port[val_len-1] = '\0';
         } else if(strcmp("DIRECTORY", param_name)==0) {
             conf->pub_dir = (char*) malloc(sizeof(char)*val_len);
             memset(conf->pub_dir, 0, sizeof(char)*val_len);
             strncpy(conf->pub_dir, param_val, val_len);
+            conf->pub_dir[val_len-1] = '\0';
         } else if(strcmp("DEFAULT_PAGE", param_name)==0) {
             conf->default_page = (char*) malloc(sizeof(char)*val_len);
             memset(conf->default_page, 0, sizeof(char)*val_len);
             strncpy(conf->default_page, param_val, val_len);
+            conf->default_page[val_len-1] = '\0';
         }
 
         memset(buf, 0, sizeof buf);
