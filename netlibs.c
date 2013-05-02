@@ -63,10 +63,10 @@ int send_file(const char *file_path, const int sockfd) {
     return len;
 }
 
-int read_line(char *buf, const int sockfd) {
+int read_line(char *buf,int len, const int sockfd) {
     int stat = 0;
     while(1) {
-        stat = read_socket(buf, 1, sockfd);
+        stat = read_socket(buf,len,sockfd);
         if(stat==0) return stat;
         if(*buf=='\n') {
             *buf = 0;
