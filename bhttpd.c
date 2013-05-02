@@ -82,7 +82,7 @@ int init_conf(struct serv_conf* conf) {
         while(*ptr!=0 && *ptr!='\n') *to_ptr++ = *ptr++;
         val_len = strlen(param_val) + 1;
 
-        if(strcmp("PORT", param_name)==0) {
+        if(strcmp("PORT", param_name) == 0) {
             conf->port = (char*) malloc(sizeof(char)*val_len);
             memset(conf->port, 0, sizeof(char)*val_len);
             strncpy(conf->port, param_val, val_len);
